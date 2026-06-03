@@ -9,4 +9,4 @@ directory = "./dist"
 # KV namespace binding
 [[kv_namespaces]]
 binding = "LEADERBOARD"
-id = "" # Fill in after creating the KV namespace: npx wrangler kv namespace create LEADERBOARD
+id = "e4ab8bab51ef4136ab76efb1043429b6" # Fill in after creating the KV namespace: npx wrangler kv namespace create LEADERBOARD
