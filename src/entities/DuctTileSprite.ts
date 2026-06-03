@@ -22,10 +22,11 @@ export class DuctTileSprite extends Phaser.GameObjects.Sprite {
     type: DuctType,
     rotation: Rotation,
     offsetX: number,
-    offsetY: number
+    offsetY: number,
+    cellSize: number = CELL_SIZE
   ) {
-    const pixelX = offsetX + gridX * CELL_SIZE + CELL_SIZE / 2;
-    const pixelY = offsetY + gridY * CELL_SIZE + CELL_SIZE / 2;
+    const pixelX = offsetX + gridX * cellSize + cellSize / 2;
+    const pixelY = offsetY + gridY * cellSize + cellSize / 2;
 
     super(scene, pixelX, pixelY, TEXTURE_MAP[type]);
 
@@ -35,7 +36,7 @@ export class DuctTileSprite extends Phaser.GameObjects.Sprite {
     this.gridY = gridY;
 
     this.setAngle(rotation);
-    this.setDisplaySize(CELL_SIZE, CELL_SIZE);
+    this.setDisplaySize(cellSize, cellSize);
 
     scene.add.existing(this);
   }

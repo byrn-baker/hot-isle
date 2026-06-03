@@ -17,10 +17,11 @@ export class ServerRackSprite extends Phaser.GameObjects.Container {
     meltdownThreshold: number,
     safeThreshold: number,
     offsetX: number,
-    offsetY: number
+    offsetY: number,
+    cellSize: number = CELL_SIZE
   ) {
-    const pixelX = offsetX + gridX * CELL_SIZE + CELL_SIZE / 2;
-    const pixelY = offsetY + gridY * CELL_SIZE + CELL_SIZE / 2;
+    const pixelX = offsetX + gridX * cellSize + cellSize / 2;
+    const pixelY = offsetY + gridY * cellSize + cellSize / 2;
 
     super(scene, pixelX, pixelY);
 
@@ -30,14 +31,14 @@ export class ServerRackSprite extends Phaser.GameObjects.Container {
 
     // Server sprite
     this.sprite = new Phaser.GameObjects.Sprite(scene, 0, 0, 'server');
-    this.sprite.setDisplaySize(CELL_SIZE, CELL_SIZE);
+    this.sprite.setDisplaySize(cellSize, cellSize);
     this.add(this.sprite);
 
     // Temperature bar positioned below the server sprite
     this.temperatureBar = new TemperatureBar(
       scene,
       pixelX,
-      pixelY + CELL_SIZE / 2 - 6,
+      pixelY + cellSize / 2 - 6,
       meltdownThreshold,
       safeThreshold
     );

@@ -61,6 +61,7 @@ export class GameScene extends Phaser.Scene {
   private lastTapX = -1;
   private lastTapY = -1;
   private longPressTimer: ReturnType<typeof setTimeout> | null = null;
+  private currentCellSize = CELL_SIZE;
 
   private meltdownTriggered = false;
 
@@ -86,9 +87,17 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     const { levelConfig } = this;
 
+    // Calculate dynamic cell size to fit the screen
+    const availableWidth = this.scale.width - 20; // padding
+    const availableHeight = this.scale.height - 120; // room for UI top + inventory bottom
+    const cellFromWidth = Math.floor(availableWidth / levelConfig.gridWidth);
+    const cellFromHeight = Math.floor(availableHeight / levelConfig.gridHeight);
+    const dynamicCellSize = Math.min(cellFromWidth, cellFromHeight, CELL_SIZE);
+    this.currentCellSize = Math.max(dynamicCellSize, 32); // minimum 32px cells
+
     // Calculate grid offset to center it
-    const gridPixelWidth = levelConfig.gridWidth * CELL_SIZE;
-    const gridPixelHeight = levelConfig.gridHeight * CELL_SIZE;
+    const gridPixelWidth = levelConfig.gridWidth * this.currentCellSize;
+    const gridPixelHeight = levelConfig.gridHeight * this.currentCellSize;
     this.gridOffsetX = (this.scale.width - gridPixelWidth) / 2;
     this.gridOffsetY = 40; // Leave room for UI at top
 
@@ -238,8 +247,8 @@ export class GameScene extends Phaser.Scene {
 
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
     // Convert pointer to grid position
-    const gridX = Math.floor((pointer.x - this.gridOffsetX) / CELL_SIZE);
-    const gridY = Math.floor((pointer.y - this.gridOffsetY) / CELL_SIZE);
+    const gridX = Math.floor((pointer.x - this.gridOffsetX) / this.currentCellSize);
+    const gridY = Math.floor((pointer.y - this.gridOffsetY) / this.currentCellSize);
 
     // Check bounds
     if (gridX < 0 || gridX >= this.grid.width || gridY < 0 || gridY >= this.grid.height) return;
@@ -314,7 +323,7 @@ export class GameScene extends Phaser.Scene {
 
     const sprite = new DuctTileSprite(
       this, gridX, gridY, type, 0,
-      this.gridOffsetX, this.gridOffsetY
+      this.gridOffsetX, this.gridOffsetY, this.currentCellSize
     );
     this.ductSprites.set(`${gridX},${gridY}`, sprite);
   }
@@ -332,6 +341,7 @@ export class GameScene extends Phaser.Scene {
 
   private drawGridBackground(width: number, height: number): void {
     const g = this.add.graphics();
+    const cs = this.currentCellSize;
     g.fillStyle(COLOR_GRID_BG, 1);
     g.fillRect(this.gridOffsetX, this.gridOffsetY, width, height);
 
@@ -339,28 +349,29 @@ export class GameScene extends Phaser.Scene {
     g.lineStyle(1, 0x334455, 0.4);
     for (let x = 0; x <= this.grid.width; x++) {
       g.lineBetween(
-        this.gridOffsetX + x * CELL_SIZE, this.gridOffsetY,
-        this.gridOffsetX + x * CELL_SIZE, this.gridOffsetY + height
+        this.gridOffsetX + x * cs, this.gridOffsetY,
+        this.gridOffsetX + x * cs, this.gridOffsetY + height
       );
     }
     for (let y = 0; y <= this.grid.height; y++) {
       g.lineBetween(
-        this.gridOffsetX, this.gridOffsetY + y * CELL_SIZE,
-        this.gridOffsetX + width, this.gridOffsetY + y * CELL_SIZE
+        this.gridOffsetX, this.gridOffsetY + y * cs,
+        this.gridOffsetX + width, this.gridOffsetY + y * cs
       );
     }
 
     // Obstacle sprites
     for (const obs of this.levelConfig.obstacles) {
       this.add.sprite(
-        this.gridOffsetX + obs.x * CELL_SIZE + CELL_SIZE / 2,
-        this.gridOffsetY + obs.y * CELL_SIZE + CELL_SIZE / 2,
+        this.gridOffsetX + obs.x * cs + cs / 2,
+        this.gridOffsetY + obs.y * cs + cs / 2,
         'obstacle'
-      ).setDisplaySize(CELL_SIZE, CELL_SIZE);
+      ).setDisplaySize(cs, cs);
     }
   }
 
   private createServerSprites(): void {
+    const cs = this.currentCellSize;
     this.servers.forEach((server) => {
       const sprite = new ServerRackSprite(
         this,
@@ -370,13 +381,15 @@ export class GameScene extends Phaser.Scene {
         server.meltdownThreshold,
         server.safeThreshold,
         this.gridOffsetX,
-        this.gridOffsetY
+        this.gridOffsetY,
+        cs
       );
       this.serverSprites.set(server.id, sprite);
     });
   }
 
   private createColdSourceSprites(): void {
+    const cs = this.currentCellSize;
     for (const source of this.levelConfig.coldSources) {
       const sprite = new ColdSourceSprite(
         this,
@@ -384,13 +397,15 @@ export class GameScene extends Phaser.Scene {
         source.y,
         source.direction,
         this.gridOffsetX,
-        this.gridOffsetY
+        this.gridOffsetY,
+        cs
       );
       this.coldSourceSprites.push(sprite);
     }
   }
 
   private drawAirflowPaths(paths: Set<string>): void {
+    const cs = this.currentCellSize;
     this.airflowGraphics.clear();
     this.airflowGraphics.fillStyle(0x4fc3f7, 0.2);
 
@@ -399,10 +414,10 @@ export class GameScene extends Phaser.Scene {
       const x = parseInt(xStr!, 10);
       const y = parseInt(yStr!, 10);
       this.airflowGraphics.fillRect(
-        this.gridOffsetX + x * CELL_SIZE + 4,
-        this.gridOffsetY + y * CELL_SIZE + 4,
-        CELL_SIZE - 8,
-        CELL_SIZE - 8
+        this.gridOffsetX + x * cs + 4,
+        this.gridOffsetY + y * cs + 4,
+        cs - 8,
+        cs - 8
       );
     }
   }
@@ -446,12 +461,13 @@ export class GameScene extends Phaser.Scene {
   private drawCursor(): void {
     this.cursorGraphics.clear();
     if (!this.cursorVisible) return;
+    const cs = this.currentCellSize;
     this.cursorGraphics.lineStyle(2, 0xffffff, 0.9);
     this.cursorGraphics.strokeRect(
-      this.gridOffsetX + this.cursorX * CELL_SIZE + 2,
-      this.gridOffsetY + this.cursorY * CELL_SIZE + 2,
-      CELL_SIZE - 4,
-      CELL_SIZE - 4
+      this.gridOffsetX + this.cursorX * cs + 2,
+      this.gridOffsetY + this.cursorY * cs + 2,
+      cs - 4,
+      cs - 4
     );
   }
 

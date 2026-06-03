@@ -7,19 +7,14 @@ import { LevelCompleteScene } from '@/scenes/LevelCompleteScene';
 import { CustomLevelScene } from '@/scenes/CustomLevelScene';
 
 const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO, // WebGL with Canvas fallback
+  type: Phaser.AUTO,
   parent: 'game-container',
-  width: 960,
-  height: 640,
   backgroundColor: '#1a1a2e',
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    expandParent: true,
-    min: {
-      width: 375,
-      height: 250,
-    },
+    width: '100%',
+    height: '100%',
   },
   input: {
     keyboard: true,
