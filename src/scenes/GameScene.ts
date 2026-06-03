@@ -106,7 +106,7 @@ export class GameScene extends Phaser.Scene {
 
     // Calculate dynamic cell size to fit the screen
     const availableWidth = this.scale.width - 20; // padding
-    const availableHeight = this.scale.height - 120; // room for UI top + inventory bottom
+    const availableHeight = this.scale.height - 140; // room for UI top + inventory bottom
     const cellFromWidth = Math.floor(availableWidth / levelConfig.gridWidth);
     const cellFromHeight = Math.floor(availableHeight / levelConfig.gridHeight);
     const dynamicCellSize = Math.min(cellFromWidth, cellFromHeight, CELL_SIZE);
@@ -138,8 +138,8 @@ export class GameScene extends Phaser.Scene {
     this.createServerSprites();
     this.createColdSourceSprites();
 
-    // Create tile inventory
-    const inventoryY = this.gridOffsetY + gridPixelHeight + 20;
+    // Create tile inventory (spaced below grid to avoid overlap)
+    const inventoryY = this.gridOffsetY + gridPixelHeight + 40;
     this.inventory = new TileInventory(
       this,
       this.gridOffsetX,
@@ -194,6 +194,12 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-R', () => this.handleKeyboardRotate());
     this.input.keyboard?.on('keydown-DELETE', () => this.handleKeyboardRemove());
     this.input.keyboard?.on('keydown-BACKSPACE', () => this.handleKeyboardRemove());
+
+    // Number keys to select tile type (1=straight, 2=corner, 3=t-junction, 4=cross)
+    this.input.keyboard?.on('keydown-ONE', () => this.inventory.selectByIndex(0));
+    this.input.keyboard?.on('keydown-TWO', () => this.inventory.selectByIndex(1));
+    this.input.keyboard?.on('keydown-THREE', () => this.inventory.selectByIndex(2));
+    this.input.keyboard?.on('keydown-FOUR', () => this.inventory.selectByIndex(3));
 
     // Pause button (top right)
     this.pauseButton = this.add.text(

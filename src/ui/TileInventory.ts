@@ -140,4 +140,13 @@ export class TileInventory extends Phaser.GameObjects.Container {
       slot.countText.setText(`${count}`);
     }
   }
+
+  /** Select a tile type by its position index (0=straight, 1=corner, 2=t_junction, 3=cross) */
+  selectByIndex(index: number): void {
+    const types: DuctType[] = ['straight', 'corner', 't_junction', 'cross'];
+    const type = types[index];
+    if (type) {
+      this.selectSlot(type);
+    }
+  }
 }
