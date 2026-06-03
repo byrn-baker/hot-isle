@@ -1,0 +1,37 @@
+{
+  "id": "level-001",
+  "name": "Tutorial: First Contact",
+  "gridWidth": 5,
+  "gridHeight": 5,
+  "servers": [
+    {
+      "x": 4,
+      "y": 2,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 3,
+      "coolingRate": 8
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 2,
+      "direction": "right",
+      "strength": 1
+    }
+  ],
+  "obstacles": [],
+  "availableTiles": {
+    "straight": 5,
+    "corner": 2,
+    "t_junction": 1,
+    "cross": 1
+  },
+  "scoring": {
+    "threeStarTiles": 3,
+    "twoStarTiles": 5,
+    "threeStarTime": 30,
+    "twoStarTime": 60
+  }
+}

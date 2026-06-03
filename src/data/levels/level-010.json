@@ -1,0 +1,89 @@
+{
+  "id": "level-010",
+  "name": "Final Meltdown",
+  "gridWidth": 8,
+  "gridHeight": 8,
+  "servers": [
+    {
+      "x": 7,
+      "y": 1,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 5,
+      "coolingRate": 7
+    },
+    {
+      "x": 7,
+      "y": 4,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 6,
+      "coolingRate": 7
+    },
+    {
+      "x": 7,
+      "y": 7,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 5,
+      "coolingRate": 7
+    },
+    {
+      "x": 4,
+      "y": 7,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 6,
+      "coolingRate": 7
+    },
+    {
+      "x": 0,
+      "y": 7,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 5,
+      "coolingRate": 7
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 0,
+      "direction": "down",
+      "strength": 1
+    },
+    {
+      "x": 0,
+      "y": 4,
+      "direction": "right",
+      "strength": 1
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "direction": "down",
+      "strength": 1
+    }
+  ],
+  "obstacles": [
+    { "x": 2, "y": 2 },
+    { "x": 3, "y": 2 },
+    { "x": 5, "y": 3 },
+    { "x": 5, "y": 5 },
+    { "x": 2, "y": 5 },
+    { "x": 2, "y": 6 },
+    { "x": 6, "y": 1 }
+  ],
+  "availableTiles": {
+    "straight": 8,
+    "corner": 6,
+    "t_junction": 4,
+    "cross": 2
+  },
+  "scoring": {
+    "threeStarTiles": 12,
+    "twoStarTiles": 16,
+    "threeStarTime": 45,
+    "twoStarTime": 90
+  }
+}

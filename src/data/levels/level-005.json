@@ -1,0 +1,47 @@
+{
+  "id": "level-005",
+  "name": "Heat Wave",
+  "gridWidth": 5,
+  "gridHeight": 5,
+  "servers": [
+    {
+      "x": 4,
+      "y": 1,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 6,
+      "coolingRate": 8
+    },
+    {
+      "x": 4,
+      "y": 3,
+      "meltdownThreshold": 85,
+      "safeThreshold": 35,
+      "heatRate": 6,
+      "coolingRate": 8
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 2,
+      "direction": "right",
+      "strength": 1
+    }
+  ],
+  "obstacles": [
+    { "x": 2, "y": 2 }
+  ],
+  "availableTiles": {
+    "straight": 3,
+    "corner": 3,
+    "t_junction": 2,
+    "cross": 0
+  },
+  "scoring": {
+    "threeStarTiles": 5,
+    "twoStarTiles": 7,
+    "threeStarTime": 25,
+    "twoStarTime": 50
+  }
+}

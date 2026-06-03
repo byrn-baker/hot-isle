@@ -1,0 +1,62 @@
+{
+  "id": "level-006",
+  "name": "Cross Traffic",
+  "gridWidth": 7,
+  "gridHeight": 7,
+  "servers": [
+    {
+      "x": 6,
+      "y": 1,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 6,
+      "y": 5,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 3,
+      "y": 6,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 3,
+      "direction": "right",
+      "strength": 1
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "direction": "down",
+      "strength": 1
+    }
+  ],
+  "obstacles": [
+    { "x": 2, "y": 1 },
+    { "x": 4, "y": 5 }
+  ],
+  "availableTiles": {
+    "straight": 6,
+    "corner": 4,
+    "t_junction": 2,
+    "cross": 2
+  },
+  "scoring": {
+    "threeStarTiles": 8,
+    "twoStarTiles": 11,
+    "threeStarTime": 50,
+    "twoStarTime": 100
+  }
+}

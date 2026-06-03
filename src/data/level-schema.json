@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Hot Isle Cold Isle Level",
+  "description": "Schema for defining levels in Hot Isle Cold Isle. Use this to create custom levels.",
+  "type": "object",
+  "required": ["id", "name", "gridWidth", "gridHeight", "servers", "coldSources", "obstacles", "availableTiles", "scoring"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique level identifier (e.g., 'custom-my-level')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name shown in level select",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "gridWidth": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 20,
+      "description": "Number of columns in the grid"
+    },
+    "gridHeight": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 20,
+      "description": "Number of rows in the grid"
+    },
+    "servers": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Server racks that need cooling",
+      "items": {
+        "type": "object",
+        "required": ["x", "y", "meltdownThreshold", "safeThreshold", "heatRate", "coolingRate"],
+        "properties": {
+          "x": { "type": "integer", "minimum": 0 },
+          "y": { "type": "integer", "minimum": 0 },
+          "meltdownThreshold": { "type": "number", "minimum": 50, "description": "Temperature at which the server melts down" },
+          "safeThreshold": { "type": "number", "minimum": 20, "description": "Temperature at which the server is considered cooled" },
+          "heatRate": { "type": "number", "minimum": 0.1, "description": "Degrees per second of heat increase" },
+          "coolingRate": { "type": "number", "minimum": 0.1, "description": "Degrees per second of cooling when receiving airflow" }
+        }
+      }
+    },
+    "coldSources": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Sources that emit cold air in a specific direction",
+      "items": {
+        "type": "object",
+        "required": ["x", "y", "direction", "strength"],
+        "properties": {
+          "x": { "type": "integer", "minimum": 0 },
+          "y": { "type": "integer", "minimum": 0 },
+          "direction": { "type": "string", "enum": ["up", "down", "left", "right"] },
+          "strength": { "type": "number", "minimum": 0.1, "description": "Cooling power multiplier" }
+        }
+      }
+    },
+    "obstacles": {
+      "type": "array",
+      "description": "Blocked cells where ducts cannot be placed",
+      "items": {
+        "type": "object",
+        "required": ["x", "y"],
+        "properties": {
+          "x": { "type": "integer", "minimum": 0 },
+          "y": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "availableTiles": {
+      "type": "object",
+      "required": ["straight", "corner", "t_junction", "cross"],
+      "description": "Number of each duct tile type available to the player",
+      "properties": {
+        "straight": { "type": "integer", "minimum": 0 },
+        "corner": { "type": "integer", "minimum": 0 },
+        "t_junction": { "type": "integer", "minimum": 0 },
+        "cross": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "scoring": {
+      "type": "object",
+      "required": ["threeStarTiles", "twoStarTiles", "threeStarTime", "twoStarTime"],
+      "description": "Thresholds for star ratings",
+      "properties": {
+        "threeStarTiles": { "type": "integer", "minimum": 1, "description": "Max tiles used for 3 stars" },
+        "twoStarTiles": { "type": "integer", "minimum": 1, "description": "Max tiles used for 2 stars" },
+        "threeStarTime": { "type": "number", "minimum": 1, "description": "Max seconds for 3-star time" },
+        "twoStarTime": { "type": "number", "minimum": 1, "description": "Max seconds for 2-star time" }
+      }
+    }
+  }
+}

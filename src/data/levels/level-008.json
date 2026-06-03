@@ -1,0 +1,73 @@
+{
+  "id": "level-008",
+  "name": "Data Center",
+  "gridWidth": 8,
+  "gridHeight": 7,
+  "servers": [
+    {
+      "x": 7,
+      "y": 1,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 7,
+      "y": 3,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 7,
+      "y": 5,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 3,
+      "y": 6,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 3,
+      "direction": "right",
+      "strength": 1
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "direction": "down",
+      "strength": 1
+    }
+  ],
+  "obstacles": [
+    { "x": 2, "y": 2 },
+    { "x": 2, "y": 4 },
+    { "x": 5, "y": 1 },
+    { "x": 5, "y": 5 },
+    { "x": 4, "y": 3 }
+  ],
+  "availableTiles": {
+    "straight": 8,
+    "corner": 5,
+    "t_junction": 3,
+    "cross": 2
+  },
+  "scoring": {
+    "threeStarTiles": 10,
+    "twoStarTiles": 14,
+    "threeStarTime": 60,
+    "twoStarTime": 120
+  }
+}

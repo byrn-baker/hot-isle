@@ -1,50 +1,39 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- Sync Impact Report
+  Version change: 0.0.0 → 1.0.0
+  Added sections: All (initial constitution)
+  Removed sections: None
+  Templates requiring updates: None (initial setup)
+  Follow-up TODOs: None
+-->
+
+# Hot Isle Cold Isle Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Game-First Design
+Every feature MUST deliver a clear, enjoyable gameplay experience. Mechanics are prioritized over visual polish. The core loop (redirect cold air → prevent overheating) MUST be satisfying and intuitive from the first playable version.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Progressive Complexity
+The game MUST introduce mechanics gradually. Early levels teach basics (airflow direction), later levels add constraints (limited duct pieces, time pressure, multiple heat sources). Difficulty curves MUST be playtested and tunable.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Simulation Integrity
+Airflow and heat mechanics MUST follow consistent, understandable rules. Players MUST be able to predict outcomes based on visible state. No hidden mechanics or random failures that contradict the displayed system.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Browser-Native & Lightweight
+The game MUST run in modern browsers without plugins or heavy dependencies. Performance MUST remain smooth (60fps target) on mid-range hardware. Bundle size MUST stay minimal.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Accessibility
+The game MUST be playable with keyboard and mouse. Color MUST NOT be the sole indicator of hot/cold state. UI elements MUST meet WCAG AA contrast ratios. Game state MUST be pausable.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Development Standards
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
-
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- All game mechanics MUST be unit-testable in isolation
+- Visual components MUST be separable from logic
+- Level data MUST be declarative (JSON/data-driven), not hardcoded
+- Code MUST be modular: rendering, simulation, input, and level management are independent systems
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution governs all development decisions for Hot Isle Cold Isle. Amendments require documentation and a clear rationale. Complexity MUST be justified against the Game-First principle.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-06-03 | **Last Amended**: 2026-06-03

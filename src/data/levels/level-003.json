@@ -1,0 +1,45 @@
+{
+  "id": "level-003",
+  "name": "Branching Out",
+  "gridWidth": 6,
+  "gridHeight": 5,
+  "servers": [
+    {
+      "x": 5,
+      "y": 0,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "meltdownThreshold": 100,
+      "safeThreshold": 40,
+      "heatRate": 4,
+      "coolingRate": 7
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 2,
+      "direction": "right",
+      "strength": 1
+    }
+  ],
+  "obstacles": [],
+  "availableTiles": {
+    "straight": 5,
+    "corner": 3,
+    "t_junction": 2,
+    "cross": 0
+  },
+  "scoring": {
+    "threeStarTiles": 5,
+    "twoStarTiles": 7,
+    "threeStarTime": 45,
+    "twoStarTime": 90
+  }
+}

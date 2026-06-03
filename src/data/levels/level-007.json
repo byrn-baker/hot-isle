@@ -1,0 +1,53 @@
+{
+  "id": "level-007",
+  "name": "Tight Budget",
+  "gridWidth": 6,
+  "gridHeight": 5,
+  "servers": [
+    {
+      "x": 5,
+      "y": 0,
+      "meltdownThreshold": 95,
+      "safeThreshold": 38,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 5,
+      "y": 2,
+      "meltdownThreshold": 95,
+      "safeThreshold": 38,
+      "heatRate": 4,
+      "coolingRate": 7
+    },
+    {
+      "x": 5,
+      "y": 4,
+      "meltdownThreshold": 95,
+      "safeThreshold": 38,
+      "heatRate": 4,
+      "coolingRate": 7
+    }
+  ],
+  "coldSources": [
+    {
+      "x": 0,
+      "y": 2,
+      "direction": "right",
+      "strength": 1
+    }
+  ],
+  "obstacles": [],
+  "availableTiles": {
+    "straight": 3,
+    "corner": 2,
+    "t_junction": 2,
+    "cross": 0
+  },
+  "scoring": {
+    "threeStarTiles": 5,
+    "twoStarTiles": 6,
+    "threeStarTime": 35,
+    "twoStarTime": 70
+  }
+}
