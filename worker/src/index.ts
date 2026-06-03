@@ -26,20 +26,42 @@ function errorResponse(message: string, status: number): Response {
   return jsonResponse({ error: message }, status);
 }
 
-export const onRequestOptions: PagesFunction<Env> = async () => {
-  return new Response(null, { status: 204, headers: CORS_HEADERS });
-};
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
 
-export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const raw = await context.env.LEADERBOARD.get('top3');
+    // Only handle /api/leaderboard
+    if (url.pathname !== '/api/leaderboard') {
+      return new Response(null, { status: 404 });
+    }
+
+    // CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+
+    if (request.method === 'GET') {
+      return handleGet(env);
+    }
+
+    if (request.method === 'POST') {
+      return handlePost(request, env);
+    }
+
+    return errorResponse('Method not allowed', 405);
+  },
+} satisfies ExportedHandler<Env>;
+
+async function handleGet(env: Env): Promise<Response> {
+  const raw = await env.LEADERBOARD.get('top3');
   const entries: LeaderboardEntry[] = raw ? JSON.parse(raw) : [];
   return jsonResponse(entries);
-};
+}
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
+async function handlePost(request: Request, env: Env): Promise<Response> {
   let body: unknown;
   try {
-    body = await context.request.json();
+    body = await request.json();
   } catch {
     return errorResponse('Invalid JSON body', 400);
   }
@@ -82,7 +104,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   };
 
   // Get current leaderboard
-  const raw = await context.env.LEADERBOARD.get('top3');
+  const raw = await env.LEADERBOARD.get('top3');
   const entries: LeaderboardEntry[] = raw ? JSON.parse(raw) : [];
 
   // Add new entry and sort: stars desc, then totalTime asc
@@ -100,7 +122,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     (e) => e.nickname === newEntry.nickname && e.stars === newEntry.stars && e.totalTime === newEntry.totalTime
   );
 
-  await context.env.LEADERBOARD.put('top3', JSON.stringify(top3));
+  await env.LEADERBOARD.put('top3', JSON.stringify(top3));
 
   return jsonResponse({ success: true, qualified });
-};
+}

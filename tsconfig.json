@@ -28,5 +28,6 @@
       "@/types": ["src/types/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["worker", "node_modules"]
 }

@@ -1,0 +1,12 @@
+name = "hot-isle"
+main = "worker/src/index.ts"
+compatibility_date = "2026-06-03"
+
+# Serve the Vite build output as static assets
+[assets]
+directory = "./dist"
+
+# KV namespace binding
+[[kv_namespaces]]
+binding = "LEADERBOARD"
+id = "" # Fill in after creating the KV namespace: npx wrangler kv namespace create LEADERBOARD
