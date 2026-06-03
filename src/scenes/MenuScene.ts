@@ -16,6 +16,9 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    // Re-layout on resize (orientation change)
+    this.scale.on('resize', this.handleResize, this);
+
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
 
@@ -76,6 +79,12 @@ export class MenuScene extends Phaser.Scene {
 
     // Leaderboard ticker
     this.initLeaderboardTicker();
+  }
+
+  private handleResize(): void {
+    // Restart scene to re-layout with new dimensions
+    this.scale.off('resize', this.handleResize, this);
+    this.scene.restart();
   }
 
   update(): void {

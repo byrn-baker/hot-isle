@@ -87,6 +87,12 @@ export class GameScene extends Phaser.Scene {
   create(): void {
     const { levelConfig } = this;
 
+    // Restart scene on resize (orientation change)
+    this.scale.on('resize', () => {
+      this.scale.off('resize');
+      this.scene.restart({ levelId: this.levelConfig.id });
+    });
+
     // Calculate dynamic cell size to fit the screen
     const availableWidth = this.scale.width - 20; // padding
     const availableHeight = this.scale.height - 120; // room for UI top + inventory bottom

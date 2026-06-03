@@ -17,6 +17,11 @@ export class LevelSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.scale.on('resize', () => {
+      this.scale.off('resize');
+      this.scene.restart();
+    });
+
     const centerX = this.scale.width / 2;
     const progress = loadProgress();
 
