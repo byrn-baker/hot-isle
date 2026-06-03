@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { DuctType, LevelConfig, ServerRack } from '@/types';
+import type { Difficulty, DuctType, LevelConfig, ServerRack } from '@/types';
 import { createGrid, placeDuct, removeDuct, rotateDuct, canPlaceDuct, getDuctAt } from '@/systems/GridSystem';
 import type { GridState } from '@/systems/GridSystem';
 import { resolveAirflow } from '@/systems/AirflowSystem';
@@ -10,6 +10,7 @@ import { ServerRackSprite } from '@/entities/ServerRackSprite';
 import { ColdSourceSprite } from '@/entities/ColdSourceSprite';
 import { TileInventory } from '@/ui/TileInventory';
 import { PauseOverlay } from '@/ui/PauseOverlay';
+import { loadDifficulty } from '@/utils/persistence';
 
 // Import level data
 import level001 from '@/data/levels/level-001.json';
@@ -65,6 +66,11 @@ export class GameScene extends Phaser.Scene {
 
   private meltdownTriggered = false;
 
+  // Difficulty settings
+  private difficulty: Difficulty = 'normal';
+  private heatRateMultiplier = 1.0;
+  private graceFreezeUntil = 0;
+
   constructor() {
     super({ key: 'GameScene' });
   }
@@ -82,6 +88,11 @@ export class GameScene extends Phaser.Scene {
     this.serverSprites = new Map();
     this.ductSprites = new Map();
     this.coldSourceSprites = [];
+
+    // Load difficulty
+    this.difficulty = loadDifficulty();
+    this.heatRateMultiplier = this.difficulty === 'easy' ? 0.5 : this.difficulty === 'hard' ? 1.5 : 1.0;
+    this.graceFreezeUntil = 0;
   }
 
   create(): void {
@@ -109,8 +120,12 @@ export class GameScene extends Phaser.Scene {
 
     // Initialize systems
     this.grid = createGrid(levelConfig);
+
+    // Apply difficulty: startTempMultiplier affects how hot servers start
+    const startTempMultiplier = this.difficulty === 'easy' ? 0.6 : this.difficulty === 'hard' ? 1.4 : 1.0;
     this.servers = createServers(
-      levelConfig.servers.map((s, i) => ({ id: `s${i}`, ...s }))
+      levelConfig.servers.map((s, i) => ({ id: `s${i}`, ...s })),
+      startTempMultiplier
     );
 
     // Draw grid background
@@ -227,8 +242,26 @@ export class GameScene extends Phaser.Scene {
     }));
     const airflow = resolveAirflow(this.grid, this.levelConfig.coldSources, serverPosData);
 
-    // Update temperatures
-    const tempState = updateTemperatures(this.servers, deltaSec, airflow.cooledServers);
+    // Grace freeze check for easy mode: detect servers transitioning below safe threshold
+    if (this.difficulty === 'easy') {
+      for (const server of this.servers) {
+        const coolingStrength = airflow.cooledServers.get(server.id) ?? 0;
+        if (coolingStrength > 0 && server.temperature > server.safeThreshold) {
+          // Check if this tick will bring it below safe
+          const projectedTemp = server.temperature - server.coolingRate * coolingStrength * deltaSec;
+          if (projectedTemp <= server.safeThreshold) {
+            this.graceFreezeUntil = this.elapsedTime + 5;
+          }
+        }
+      }
+    }
+
+    // Determine effective heat delta: if grace freeze is active, suppress heating
+    const isGraceFreezeActive = this.difficulty === 'easy' && this.elapsedTime < this.graceFreezeUntil;
+    const effectiveHeatDelta = isGraceFreezeActive ? 0 : deltaSec * this.heatRateMultiplier;
+
+    // Update temperatures with difficulty-adjusted heating
+    const tempState = updateTemperatures(this.servers, effectiveHeatDelta, airflow.cooledServers, deltaSec);
 
     // Update server visuals
     for (const server of tempState.servers) {

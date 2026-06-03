@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { fetchLeaderboard } from '@/services/leaderboard';
-import type { LeaderboardEntry } from '@/types';
+import type { Difficulty, LeaderboardEntry } from '@/types';
+import { loadDifficulty, saveDifficulty } from '@/utils/persistence';
 
 /**
  * Main menu / title screen.
@@ -69,6 +70,9 @@ export class MenuScene extends Phaser.Scene {
     });
     customBtn.on('pointerover', () => customBtn.setColor('#81d4fa'));
     customBtn.on('pointerout', () => customBtn.setColor('#4fc3f7'));
+
+    // Difficulty selector
+    this.createDifficultySelector(centerX, centerY + 140);
 
     // Version / footer
     this.add.text(centerX, this.scale.height - 20, 'v1.0', {
@@ -139,5 +143,58 @@ export class MenuScene extends Phaser.Scene {
     });
 
     return `\uD83C\uDFC6 ${parts.join(' | ')}`;
+  }
+
+  private createDifficultySelector(centerX: number, y: number): void {
+    const currentDifficulty = loadDifficulty();
+    const difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
+    const labels = ['EASY', 'NORMAL', 'HARD'];
+    const textObjects: Phaser.GameObjects.Text[] = [];
+
+    const updateColors = (selected: Difficulty) => {
+      for (let i = 0; i < difficulties.length; i++) {
+        textObjects[i]!.setColor(difficulties[i] === selected ? '#ffffff' : '#546e7a');
+      }
+    };
+
+    // Label
+    this.add.text(centerX, y - 20, 'DIFFICULTY', {
+      fontSize: '11px',
+      fontFamily: 'monospace',
+      color: '#546e7a',
+    }).setOrigin(0.5);
+
+    // Difficulty options in a row
+    const spacing = 100;
+    const startX = centerX - spacing;
+
+    for (let i = 0; i < difficulties.length; i++) {
+      const diff = difficulties[i]!;
+      const label = labels[i]!;
+      const x = startX + i * spacing;
+
+      const txt = this.add.text(x, y, label, {
+        fontSize: '16px',
+        fontFamily: 'monospace',
+        color: diff === currentDifficulty ? '#ffffff' : '#546e7a',
+      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+      txt.on('pointerdown', () => {
+        saveDifficulty(diff);
+        updateColors(diff);
+      });
+
+      txt.on('pointerover', () => {
+        if (loadDifficulty() !== diff) {
+          txt.setColor('#90a4ae');
+        }
+      });
+
+      txt.on('pointerout', () => {
+        txt.setColor(loadDifficulty() === diff ? '#ffffff' : '#546e7a');
+      });
+
+      textObjects.push(txt);
+    }
   }
 }

@@ -1,7 +1,8 @@
-import type { CustomLevelEntry, CustomLevelStore, LevelProgress, PlayerProgress } from '@/types';
+import type { CustomLevelEntry, CustomLevelStore, Difficulty, LevelProgress, PlayerProgress } from '@/types';
 
 const PROGRESS_KEY = 'hici-progress';
 const CUSTOM_LEVELS_KEY = 'hici-custom-levels';
+const DIFFICULTY_KEY = 'hici-difficulty';
 
 // === Player Progress ===
 
@@ -83,4 +84,22 @@ export function removeCustomLevel(id: string): void {
 export function getCustomLevel(id: string): CustomLevelEntry | null {
   const store = loadCustomLevels();
   return store.levels.find((l) => l.id === id) ?? null;
+}
+
+// === Difficulty ===
+
+export function loadDifficulty(): Difficulty {
+  try {
+    const raw = localStorage.getItem(DIFFICULTY_KEY);
+    if (raw === 'easy' || raw === 'normal' || raw === 'hard') {
+      return raw;
+    }
+    return 'normal';
+  } catch {
+    return 'normal';
+  }
+}
+
+export function saveDifficulty(d: Difficulty): void {
+  localStorage.setItem(DIFFICULTY_KEY, d);
 }

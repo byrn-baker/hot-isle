@@ -1,3 +1,7 @@
+// === Difficulty ===
+
+export type Difficulty = 'easy' | 'normal' | 'hard';
+
 // === Directions & Positioning ===
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
