@@ -1,0 +1,12 @@
+{
+  "rawResult": "QuotaExceededError",
+  "first": true,
+  "second": true,
+  "loaded": true,
+  "exact": true,
+  "characters": 256904,
+  "uncompressedCharacters": 5299471,
+  "ledgerEntries": 30006,
+  "environment": "Chromium151 actual localStorage, completed 600-second good-layout contract",
+  "codec": "HICI-GZIP-1 lossless gzip/base64; unmodified version-1 envelope after decoding"
+}

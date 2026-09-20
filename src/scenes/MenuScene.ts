@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawBackdrop } from '@/ui/Backdrop';
 import { fetchLeaderboard } from '@/services/leaderboard';
 import type { Difficulty, LeaderboardEntry } from '@/types';
 import { loadDifficulty, saveDifficulty } from '@/utils/persistence';
@@ -17,23 +18,31 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    drawBackdrop(this);
     // Re-layout on resize (orientation change)
     this.scale.on('resize', this.handleResize, this);
 
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
 
+    const panelWidth = Math.min(440, this.scale.width - 32);
+    this.add.rectangle(centerX, centerY + 10, panelWidth, 360, 0x102033, 0.94)
+      .setStrokeStyle(1, 0x355769);
+    this.add.rectangle(centerX, centerY - 170, panelWidth, 3, 0x65e6ce);
+    this.add.text(centerX, centerY - 150, 'THERMAL CONTROL / OPERATIONS', {
+      fontFamily: 'monospace', fontSize: '10px', color: '#8aa8bb',
+    }).setOrigin(0.5);
     // Title
     this.add.text(centerX, centerY - 120, 'HOT ISLE', {
       fontSize: '42px',
       fontFamily: 'monospace',
-      color: '#ef5350',
+      color: '#ffb06d',
     }).setOrigin(0.5);
 
     this.add.text(centerX, centerY - 75, 'COLD ISLE', {
       fontSize: '42px',
       fontFamily: 'monospace',
-      color: '#4fc3f7',
+      color: '#72ead9',
     }).setOrigin(0.5);
 
     // Subtitle
@@ -60,7 +69,7 @@ export class MenuScene extends Phaser.Scene {
     const customBtn = this.add.text(centerX, centerY + 90, '[ CUSTOM LEVELS ]', {
       fontSize: '18px',
       fontFamily: 'monospace',
-      color: '#4fc3f7',
+      color: '#72ead9',
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
     customBtn.on('pointerdown', () => {

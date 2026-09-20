@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawBackdrop } from '@/ui/Backdrop';
 import type { LevelScoringConfig } from '@/types';
 import { calculateScore } from '@/systems/ScoreSystem';
 import { saveLevelProgress, loadProgress } from '@/utils/persistence';
@@ -21,6 +22,7 @@ export class LevelCompleteScene extends Phaser.Scene {
   }
 
   create(data: LevelCompleteData): void {
+    drawBackdrop(this);
     const { success, levelId, tilesUsed, timeElapsed, scoring } = data;
 
     const centerX = this.scale.width / 2;

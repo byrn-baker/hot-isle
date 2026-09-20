@@ -1,0 +1,172 @@
+[
+  {
+    "mode": "good",
+    "peak": 21.00000000001439,
+    "ms": 27747.325795,
+    "status": "succeeded",
+    "reliability": 1,
+    "profit": 2898.249998,
+    "cash": 30898.249998,
+    "accounts": {
+      "cashMicrocents": 3089824999800,
+      "operatingRevenueMicrocents": 312000000000,
+      "settlementMicrocents": 0,
+      "itElectricityCostMicrocents": 100000000,
+      "coolingElectricityCostMicrocents": 75000000,
+      "rentCostMicrocents": 10000000200,
+      "maintenanceCostMicrocents": 12000000000,
+      "operatingProfitMicrocents": 289824999800,
+      "capitalPurchasesMicrocents": 12200000000000,
+      "resaleProceedsMicrocents": 0
+    },
+    "placements": [
+      {
+        "id": "cooler-1",
+        "kind": "cooler",
+        "definitionId": "cooler-floor-80",
+        "position": {
+          "x": 1,
+          "y": 2
+        },
+        "orientation": "east",
+        "commandedCoolingFraction": 1
+      },
+      {
+        "id": "cooler-11",
+        "kind": "cooler",
+        "definitionId": "cooler-floor-80",
+        "position": {
+          "x": 11,
+          "y": 2
+        },
+        "orientation": "east",
+        "commandedCoolingFraction": 1
+      },
+      {
+        "id": "rack-0",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 2,
+          "y": 3
+        },
+        "orientation": "north"
+      },
+      {
+        "id": "rack-1",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 4,
+          "y": 3
+        },
+        "orientation": "north"
+      },
+      {
+        "id": "rack-2",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 7,
+          "y": 3
+        },
+        "orientation": "north"
+      },
+      {
+        "id": "rack-3",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 9,
+          "y": 3
+        },
+        "orientation": "north"
+      }
+    ]
+  },
+  {
+    "mode": "poor",
+    "peak": 32.94634488745843,
+    "ms": 23073.835381999997,
+    "status": "failed",
+    "reliability": 0.0035,
+    "profit": 975.98034634,
+    "cash": 28975.98034634,
+    "accounts": {
+      "cashMicrocents": 2897598034634,
+      "operatingRevenueMicrocents": 209874157000,
+      "settlementMicrocents": -90125843000,
+      "itElectricityCostMicrocents": 75279166,
+      "coolingElectricityCostMicrocents": 75000000,
+      "rentCostMicrocents": 10000000200,
+      "maintenanceCostMicrocents": 12000000000,
+      "operatingProfitMicrocents": 97598034634,
+      "capitalPurchasesMicrocents": 12200000000000,
+      "resaleProceedsMicrocents": 0
+    },
+    "placements": [
+      {
+        "id": "cooler-1",
+        "kind": "cooler",
+        "definitionId": "cooler-floor-80",
+        "position": {
+          "x": 1,
+          "y": 2
+        },
+        "orientation": "east",
+        "commandedCoolingFraction": 1
+      },
+      {
+        "id": "cooler-11",
+        "kind": "cooler",
+        "definitionId": "cooler-floor-80",
+        "position": {
+          "x": 11,
+          "y": 2
+        },
+        "orientation": "east",
+        "commandedCoolingFraction": 1
+      },
+      {
+        "id": "rack-0",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 7,
+          "y": 1
+        },
+        "orientation": "north"
+      },
+      {
+        "id": "rack-1",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 7,
+          "y": 3
+        },
+        "orientation": "north"
+      },
+      {
+        "id": "rack-2",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 7,
+          "y": 5
+        },
+        "orientation": "north"
+      },
+      {
+        "id": "rack-3",
+        "kind": "rack",
+        "definitionId": "rack-dense",
+        "position": {
+          "x": 7,
+          "y": 7
+        },
+        "orientation": "north"
+      }
+    ]
+  }
+]

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawBackdrop } from '@/ui/Backdrop';
 import { loadCustomLevels, addCustomLevel, removeCustomLevel } from '@/utils/persistence';
 import { validateLevel } from '@/systems/LevelValidator';
 import type { CustomLevelEntry, LevelConfig } from '@/types';
@@ -18,6 +19,7 @@ export class CustomLevelScene extends Phaser.Scene {
   }
 
   create(): void {
+    drawBackdrop(this);
     const centerX = this.scale.width / 2;
     this.levelList = loadCustomLevels().levels;
 

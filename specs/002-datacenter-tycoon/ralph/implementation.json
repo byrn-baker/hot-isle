@@ -1,0 +1,159 @@
+{
+  "project": "Hot Isle datacenter tycoon implementation",
+  "qualityGates": [
+    "npm test",
+    "npm run build",
+    "Task-specific behavior evidence; no fabricated pass claims"
+  ],
+  "stories": [
+    {
+      "id": "T001",
+      "title": "Shared foundation and US1: declarative model and placement",
+      "description": "Implement src/tycoon/model/{types,placement,validation}.ts and src/tycoon/data/{scenario-001,loadScenarioDefinition}.ts. Define complete serializable scenario/runtime types matching the reviewed contracts, initial state helper, three rack types and one cooler, rotation/ports/service access, atomic placement validation and thermal remapping helpers. Add meaningful tests in tests/tycoon/unit/model.test.ts.",
+      "status": "done",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "Invalid definitions (including non-finite/unsafe numbers) rejected; reference definition loads",
+        "Placement, rotation, shared service access, blocked ports and obstruction semantics tested",
+        "Existing tests and TypeScript build pass"
+      ],
+      "startedAt": "2026-09-13T22:36:38.999091+00:00",
+      "completedAt": "2026-09-13T22:49:24.886902+00:00",
+      "updatedAt": "2026-09-13T22:49:24.886886+00:00"
+    },
+    {
+      "id": "T002",
+      "title": "US2: spatial forced airflow and heat transport",
+      "description": "Implement src/tycoon/simulation/{AirflowSolver,ThermalTransport,RackControls}.ts against the approved equations and types. Deterministic pressure correction, components, paired fans, finite cooler, conservative donor-cell transport, mixing, thermal controls, audits and power allocation. Add behavioral tests in tests/tycoon/unit/simulation.test.ts.",
+      "status": "done",
+      "dependsOn": [
+        "T001"
+      ],
+      "acceptanceCriteria": [
+        "Directional upstream heating and obstruction change actual cell transport",
+        "Closed-component mass balance and thermal energy audits pass with declared tolerances",
+        "Finite cooling saturation, zero-flow equipment, recovery and atomic non-finite/CFL failures tested"
+      ],
+      "startedAt": "2026-09-13T22:49:26.992127+00:00",
+      "completedAt": "2026-09-13T22:58:43.224257+00:00",
+      "updatedAt": "2026-09-13T22:58:43.224242+00:00"
+    },
+    {
+      "id": "T003",
+      "title": "US1 and US3: command engine and profitable operation",
+      "description": "Implement src/tycoon/state/{ScenarioEngine,commands,selectors}.ts and src/tycoon/economy/EconomySystem.ts. Fixed-tick operation, offer acceptance, buy/move/rotate/remove/undo/workload/cooling commands, financial reconciliation, power allocation, delivered-service revenue, terminal settlement/reliability/bankruptcy. Add tests/tycoon/unit/engine.test.ts and economy.test.ts.",
+      "status": "done",
+      "dependsOn": [
+        "T002"
+      ],
+      "acceptanceCriteria": [
+        "Buy/remove cannot create cash; undo exact and clears on resume",
+        "Pause and failed commands preserve authoritative state; repeated and accelerated equal-tick operation identical",
+        "Integer accrual reconciles electricity, maintenance, rent, revenue, settlement and cash; terminal conditions explained"
+      ],
+      "startedAt": "2026-09-13T22:58:45.333803+00:00",
+      "completedAt": "2026-09-13T23:06:33.903930+00:00",
+      "updatedAt": "2026-09-13T23:06:33.903918+00:00"
+    },
+    {
+      "id": "T004",
+      "title": "US4 and US5: isolated trials and complete saves",
+      "description": "Implement trials through the same engine and src/tycoon/persistence/TycoonSaveStore.ts; versioned complete schema validation, staging, paused reload, explicit storage failure and classic key isolation. Add tests/tycoon/unit/persistence.test.ts and trials.test.ts.",
+      "status": "done",
+      "dependsOn": [
+        "T003"
+      ],
+      "acceptanceCriteria": [
+        "Live state and storage unchanged by projected trial, including on failure",
+        "Complete save/reload round trip preserves thermal/control/financial/time state; no offline earnings",
+        "Malformed, incompatible and unavailable/quota storage cases handled without deleting previous save"
+      ],
+      "startedAt": "2026-09-13T23:06:36.013015+00:00",
+      "completedAt": "2026-09-13T23:16:26.322107+00:00",
+      "updatedAt": "2026-09-13T23:16:26.322090+00:00"
+    },
+    {
+      "id": "T005",
+      "title": "US1 US4 US5: playable 3D tycoon presentation",
+      "description": "Implement src/tycoon/bootstrap.ts, rendering/RoomRenderer.ts, ui/RoomController.ts and ui/room.css; wire src/main.ts default to tycoon retaining classic route. Deliver polished isometric 3D equipment/room, visible intake/exhaust, placement preview and selection, catalog and operation ledger, overlays/inspection, trial reports, save/load, contract result, first-visit help, responsive DOM. All core actions keyboard/mouse, right-click deletes, resize preserves layout and hidden tabs pause. Reuse procedural Three.js ideas from prototype. No external image requirement.",
+      "status": "done",
+      "dependsOn": [
+        "T004"
+      ],
+      "acceptanceCriteria": [
+        "Playable buy/place/orient/operate/diagnose/earn/save loop connected to real engine",
+        "Keyboard help lists exact implemented keys, focus visible, DOM controls reachable, numeric diagnostics supplement colors",
+        "TypeScript/build and existing tests pass; include UI smoke evidence available locally without claiming unperformed browser tests"
+      ],
+      "startedAt": "2026-09-13T23:16:28.427568+00:00",
+      "completedAt": "2026-09-13T23:32:47.070312+00:00",
+      "updatedAt": "2026-09-13T23:32:47.070300+00:00"
+    },
+    {
+      "id": "T006",
+      "title": "US2 US3 US4: matched-layout acceptance and calibration",
+      "description": "Add tests/tycoon/fixtures and tests/tycoon/acceptance/layouts.test.ts with identical inventory/air/workload/tariff/duration good-vs-poor layouts. Calibrate only declarative fictional data if needed; fix actual model defects with evidence. Record exact layouts and results in specs/002-datacenter-tycoon/validation.md, include affordable player build instructions. Supervising-session groundwork is now present: reuse tests/tycoon/fixtures/matchedLayouts.ts, acceptance/layouts.test.ts, validation.md and benchmarks/initial-contract.json. Actual full-contract benchmark already passed with 11.95 C difference and positive profitable success. Finish by updating the old SCENARIO_001.trialFixtures good/poor examples to these measured matching layouts and 600,000ms duration, reconciling docs, and verifying current code. Do not redo the exploratory layout search or discard existing evidence.",
+      "status": "done",
+      "dependsOn": [
+        "T005"
+      ],
+      "acceptanceCriteria": [
+        "Good layout lowers affected peak intake by at least 5 C and produces higher operating profit using actual transport",
+        "Document affordable profitable complete-contract layout and adverse layout effects",
+        "Workload, orientation, equal-tick speed, pause/trial/save behaviors pass meaningful tests; full suite and production build pass"
+      ],
+      "startedAt": "2026-09-13T23:32:49.189195+00:00",
+      "completedAt": "2026-09-13T23:36:56.375529+00:00",
+      "updatedAt": "2026-09-13T23:36:56.375514+00:00"
+    },
+    {
+      "id": "T007",
+      "title": "US5: browser workflow and final verification",
+      "description": "Use available browser tooling or install a minimal development browser harness if needed. Verify and fix rendered desktop UI and keyboard/mouse workflows, right-click removal/undo, overlay/trial/operation/save/resize, classic access. Record tested environment and performance profile up to 24 racks in specs/002-datacenter-tycoon/validation.md. Update README with gameplay instructions. Do not claim a real first-time human playtest or midrange-device result without actual evidence. Playwright is installed and configured (playwright.config.ts, npm run test:browser); tests/browser/classic.spec.ts and trial-worker.spec.ts already pass. Extend this existing harness. Renderer groundwork was visually inspected, but actual integrated UI still requires inspection and workflow checks.",
+      "status": "done",
+      "dependsOn": [
+        "T006"
+      ],
+      "acceptanceCriteria": [
+        "Browser workflows actually exercised and screenshots inspected; failures fixed",
+        "Performance numbers identify actual environment and limitations; unmeasured targets explicitly pending",
+        "Full npm test and npm run build pass; tasks/progress accurately reflect implementation and remaining human evidence"
+      ],
+      "startedAt": "2026-09-13T23:36:58.495913+00:00",
+      "completedAt": "2026-09-13T23:52:37.549987+00:00",
+      "updatedAt": "2026-09-13T23:52:37.549979+00:00"
+    },
+    {
+      "id": "T008",
+      "title": "Review player-feedback camera, selection and mobile layout fixes",
+      "description": "Review the newly implemented RoomRenderer/RoomController/bootstrap/room.css and tests/browser/room-design.spec.ts changes for camera orbit, mouse rack picking, clickable labels and mobile stats. This is a bounded review iteration: do not edit application files while root browser verification runs. Inspect code and Spec Kit tasks.md feedback scope. Run focused UI unit tests if useful. Record concrete findings or no findings in specs/002-datacenter-tycoon/ralph/progress.md. Root owns final fixes and browser results. No commits. Complete this review story after reporting review findings; do not equate review completion with final browser acceptance.",
+      "status": "done",
+      "dependsOn": [
+        "T007"
+      ],
+      "acceptanceCriteria": [
+        "Review camera controls, solid-only ray picking, label interactions and responsive stats/touch layout",
+        "Record concrete findings for root; preserve concurrent changes and do not claim browser results not executed"
+      ],
+      "startedAt": "2026-09-14T00:27:07.771324+00:00",
+      "completedAt": "2026-09-14T00:32:29.529871+00:00",
+      "updatedAt": "2026-09-14T00:32:29.529852+00:00"
+    },
+    {
+      "id": "T009",
+      "title": "Review airflow visibility and blue/red direction markers",
+      "description": "Bounded read-only review of new FlowArrow.ts and updated RoomRenderer visual markers, legend/help. Confirm rack blue intake points into rack and red exhaust out, cooler red return points in and blue supply out according to scenario ports for all rotations; ensure marker meshes do not interfere with picking or mutate simulation. Root owns visual browser inspection. Do not edit app or run broad tests; report concrete findings in progress.md. Completion means review done, not unperformed visual QA. No commits.",
+      "status": "done",
+      "dependsOn": [
+        "T008"
+      ],
+      "acceptanceCriteria": [
+        "Review marker geometry, colors, rotation and picking isolation",
+        "Record findings without changing concurrent implementation"
+      ],
+      "startedAt": "2026-09-14T00:41:03.413672+00:00",
+      "completedAt": "2026-09-14T00:46:02.622947+00:00",
+      "updatedAt": "2026-09-14T00:46:02.622907+00:00"
+    }
+  ]
+}

@@ -40,10 +40,12 @@ export class ServerRackSprite extends Phaser.GameObjects.Container {
       pixelX,
       pixelY + cellSize / 2 - 6,
       meltdownThreshold,
-      safeThreshold
+      safeThreshold,
+      cellSize
     );
 
     scene.add.existing(this);
+    this.temperatureBar.setDepth(30);
   }
 
   updateTemperature(temperature: number, isMeltedDown: boolean): void {

@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
-import type { Difficulty, DuctType, LevelConfig, ServerRack } from '@/types';
+import { ControlsOverlay } from '@/ui/ControlsOverlay';
+import { drawBackdrop } from '@/ui/Backdrop';
+import type { Difficulty, DuctType, LevelConfig, Rotation, ServerRack } from '@/types';
 import { createGrid, placeDuct, removeDuct, rotateDuct, canPlaceDuct, getDuctAt } from '@/systems/GridSystem';
 import type { GridState } from '@/systems/GridSystem';
-import { resolveAirflow } from '@/systems/AirflowSystem';
+import { getDuctConnections, resolveAirflow } from '@/systems/AirflowSystem';
 import { createServers, updateTemperatures } from '@/systems/TemperatureSystem';
 import { CELL_SIZE, COLOR_GRID_BG } from '@/utils/constants';
 import { DuctTileSprite } from '@/entities/DuctTileSprite';
@@ -58,6 +60,9 @@ export class GameScene extends Phaser.Scene {
   private cursorY = 0;
   private cursorGraphics!: Phaser.GameObjects.Graphics;
   private cursorVisible = false;
+  private placementRotation: Rotation = 0;
+  private controlsOverlay!: ControlsOverlay;
+  private controlsOpen = false;
   private lastTapTime = 0;
   private lastTapX = -1;
   private lastTapY = -1;
@@ -82,6 +87,12 @@ export class GameScene extends Phaser.Scene {
     } else {
       this.levelConfig = LEVELS[levelId] ?? level001 as LevelConfig;
     }
+    this.selectedType = null;
+    this.placementRotation = 0;
+    this.cursorX = 0;
+    this.cursorY = 0;
+    this.cursorVisible = true;
+    this.controlsOpen = false;
     this.elapsedTime = 0;
     this.isPaused = false;
     this.meltdownTriggered = false;
@@ -96,6 +107,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   create(): void {
+    drawBackdrop(this);
     const { levelConfig } = this;
 
     // Restart scene on resize (orientation change)
@@ -106,7 +118,7 @@ export class GameScene extends Phaser.Scene {
 
     // Calculate dynamic cell size to fit the screen
     const availableWidth = this.scale.width - 20; // padding
-    const availableHeight = this.scale.height - 140; // room for UI top + inventory bottom
+    const availableHeight = this.scale.height - 265; // room for UI top + inventory bottom
     const cellFromWidth = Math.floor(availableWidth / levelConfig.gridWidth);
     const cellFromHeight = Math.floor(availableHeight / levelConfig.gridHeight);
     const dynamicCellSize = Math.min(cellFromWidth, cellFromHeight, CELL_SIZE);
@@ -116,7 +128,7 @@ export class GameScene extends Phaser.Scene {
     const gridPixelWidth = levelConfig.gridWidth * this.currentCellSize;
     const gridPixelHeight = levelConfig.gridHeight * this.currentCellSize;
     this.gridOffsetX = (this.scale.width - gridPixelWidth) / 2;
-    this.gridOffsetY = 40; // Leave room for UI at top
+    this.gridOffsetY = 84; // Leave room for UI at top
 
     // Initialize systems
     this.grid = createGrid(levelConfig);
@@ -128,26 +140,39 @@ export class GameScene extends Phaser.Scene {
       startTempMultiplier
     );
 
+    this.add.text(this.gridOffsetX, 62, 'COOLING NETWORK  /  LIVE', {
+      fontFamily: 'monospace', fontSize: '10px', color: '#64dac8',
+    });
     // Draw grid background
     this.drawGridBackground(gridPixelWidth, gridPixelHeight);
 
     // Create airflow graphics layer
-    this.airflowGraphics = this.add.graphics();
+    this.airflowGraphics = this.add.graphics().setDepth(10);
 
     // Create entity sprites
     this.createServerSprites();
     this.createColdSourceSprites();
 
     // Create tile inventory (spaced below grid to avoid overlap)
-    const inventoryY = this.gridOffsetY + gridPixelHeight + 40;
+    const inventoryY = this.gridOffsetY + gridPixelHeight + 60;
     this.inventory = new TileInventory(
       this,
-      this.gridOffsetX,
+      this.scale.width / 2 - 114,
       inventoryY,
       levelConfig.availableTiles,
-      (type) => { this.selectedType = type; }
+      (type) => {
+        this.selectedType = type;
+        this.placementRotation = 0;
+        if (this.cursorGraphics) this.drawCursor();
+      }
     );
     this.inventory.setInitialCounts(levelConfig.availableTiles);
+
+    this.add.text(this.scale.width / 2, inventoryY + 57,
+      '1 Straight   2 Corner   3 T-junction   4 Cross\nArrows: move   Space / Enter: place   R: rotate\nDelete: remove   H: help   Esc / P: pause',
+      { fontFamily: 'monospace', fontSize: '12px', color: '#b2c8d6',
+        align: 'center', lineSpacing: 5, wordWrap: { width: this.scale.width - 24 } }
+    ).setOrigin(0.5, 0);
 
     // Timer
     this.timerText = this.add.text(
@@ -179,7 +204,19 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
+    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      if (this.isPaused) return;
+      const x = Math.floor((pointer.x - this.gridOffsetX) / this.currentCellSize);
+      const y = Math.floor((pointer.y - this.gridOffsetY) / this.currentCellSize);
+      if (x < 0 || x >= this.grid.width || y < 0 || y >= this.grid.height) return;
+      this.cursorX = x;
+      this.cursorY = y;
+      this.drawCursor();
+    });
+
     // Keyboard shortcuts
+    this.input.keyboard?.addCapture(['UP', 'DOWN', 'LEFT', 'RIGHT', 'SPACE', 'ENTER', 'BACKSPACE']);
+    this.input.keyboard?.on('keydown-H', () => this.toggleControls());
     this.input.keyboard?.on('keydown-ESC', () => this.togglePause());
     this.input.keyboard?.on('keydown-P', () => this.togglePause());
 
@@ -191,15 +228,32 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-LEFT', () => this.moveCursor(-1, 0));
     this.input.keyboard?.on('keydown-RIGHT', () => this.moveCursor(1, 0));
     this.input.keyboard?.on('keydown-SPACE', () => this.handleKeyboardPlace());
+    this.input.keyboard?.on('keydown-ENTER', () => {
+      if (this.controlsOpen) this.toggleControls();
+      else this.handleKeyboardPlace();
+    });
     this.input.keyboard?.on('keydown-R', () => this.handleKeyboardRotate());
     this.input.keyboard?.on('keydown-DELETE', () => this.handleKeyboardRemove());
     this.input.keyboard?.on('keydown-BACKSPACE', () => this.handleKeyboardRemove());
 
     // Number keys to select tile type (1=straight, 2=corner, 3=t-junction, 4=cross)
-    this.input.keyboard?.on('keydown-ONE', () => this.inventory.selectByIndex(0));
-    this.input.keyboard?.on('keydown-TWO', () => this.inventory.selectByIndex(1));
-    this.input.keyboard?.on('keydown-THREE', () => this.inventory.selectByIndex(2));
-    this.input.keyboard?.on('keydown-FOUR', () => this.inventory.selectByIndex(3));
+    this.input.keyboard?.on('keydown-ONE', () => { if (!this.isPaused) this.inventory.selectByIndex(0); });
+    this.input.keyboard?.on('keydown-TWO', () => { if (!this.isPaused) this.inventory.selectByIndex(1); });
+    this.input.keyboard?.on('keydown-THREE', () => { if (!this.isPaused) this.inventory.selectByIndex(2); });
+    this.input.keyboard?.on('keydown-FOUR', () => { if (!this.isPaused) this.inventory.selectByIndex(3); });
+
+    const source = levelConfig.coldSources[0];
+    if (source) {
+      this.cursorX = Phaser.Math.Clamp(source.x + (source.direction === 'right' ? 1 : source.direction === 'left' ? -1 : 0), 0, this.grid.width - 1);
+      this.cursorY = Phaser.Math.Clamp(source.y + (source.direction === 'down' ? 1 : source.direction === 'up' ? -1 : 0), 0, this.grid.height - 1);
+    }
+    const types: DuctType[] = ['straight', 'corner', 't_junction', 'cross'];
+    this.inventory.selectByIndex(types.findIndex(type => levelConfig.availableTiles[type] > 0));
+    this.drawCursor();
+
+    this.add.text(this.scale.width - 155, 12, '[H] HELP', {
+      fontFamily: 'monospace', fontSize: '12px', color: '#72ead9',
+    }).setInteractive({ useHandCursor: true }).on('pointerdown', () => this.toggleControls());
 
     // Pause button (top right)
     this.pauseButton = this.add.text(
@@ -227,6 +281,10 @@ export class GameScene extends Phaser.Scene {
         }
       },
     });
+    this.controlsOverlay = new ControlsOverlay(this, levelConfig.id === 'level-003', () => this.toggleControls());
+    this.toggleControls();
+    // Render initial temperatures while the controls screen pauses the simulation.
+    for (const server of this.servers) this.serverSprites.get(server.id)?.updateTemperature(server.temperature, false);
   }
 
   update(_time: number, delta: number): void {
@@ -358,19 +416,22 @@ export class GameScene extends Phaser.Scene {
   }
 
   private placeDuctAt(gridX: number, gridY: number, type: DuctType): void {
+    // Consuming the final tile clears selection, but must retain this placement's rotation.
+    const rotation = this.placementRotation;
     if (!this.inventory.useTile(type)) return;
 
-    const duct = placeDuct(this.grid, gridX, gridY, type, 0);
+    const duct = placeDuct(this.grid, gridX, gridY, type, rotation);
     if (!duct) {
       this.inventory.returnTile(type);
       return;
     }
 
     const sprite = new DuctTileSprite(
-      this, gridX, gridY, type, 0,
+      this, gridX, gridY, type, rotation,
       this.gridOffsetX, this.gridOffsetY, this.currentCellSize
     );
     this.ductSprites.set(`${gridX},${gridY}`, sprite);
+    this.drawCursor();
   }
 
   private removeDuctAt(gridX: number, gridY: number, type: DuctType): void {
@@ -382,14 +443,27 @@ export class GameScene extends Phaser.Scene {
     sprite?.remove();
     this.ductSprites.delete(key);
     this.inventory.returnTile(type);
+    this.drawCursor();
   }
 
   private drawGridBackground(width: number, height: number): void {
     const g = this.add.graphics();
     const cs = this.currentCellSize;
+    g.fillStyle(0x020812, 0.7);
+    g.fillRoundedRect(this.gridOffsetX - 8, this.gridOffsetY - 5, width + 16, height + 16, 8);
+    g.lineStyle(1, 0x3e657a, 0.7);
+    g.strokeRoundedRect(this.gridOffsetX - 8, this.gridOffsetY - 8, width + 16, height + 16, 8);
     g.fillStyle(COLOR_GRID_BG, 1);
     g.fillRect(this.gridOffsetX, this.gridOffsetY, width, height);
 
+    for (let y = 0; y < this.grid.height; y++) {
+      for (let x = 0; x < this.grid.width; x++) {
+        g.fillStyle((x + y) % 2 ? 0x132337 : 0x102032, 1);
+        g.fillRect(this.gridOffsetX + x * cs + 1, this.gridOffsetY + y * cs + 1, cs - 2, cs - 2);
+        g.fillStyle(0x55768a, 0.3);
+        g.fillCircle(this.gridOffsetX + x * cs + 5, this.gridOffsetY + y * cs + 5, 1);
+      }
+    }
     // Grid lines
     g.lineStyle(1, 0x334455, 0.4);
     for (let x = 0; x <= this.grid.width; x++) {
@@ -452,22 +526,36 @@ export class GameScene extends Phaser.Scene {
   private drawAirflowPaths(paths: Set<string>): void {
     const cs = this.currentCellSize;
     this.airflowGraphics.clear();
-    this.airflowGraphics.fillStyle(0x4fc3f7, 0.2);
-
+    const g = this.airflowGraphics;
+    const pulse = 0.55 + Math.sin(this.elapsedTime * 4) * 0.15;
     for (const posKey of paths) {
-      const [xStr, yStr] = posKey.split(',');
-      const x = parseInt(xStr!, 10);
-      const y = parseInt(yStr!, 10);
-      this.airflowGraphics.fillRect(
-        this.gridOffsetX + x * cs + 4,
-        this.gridOffsetY + y * cs + 4,
-        cs - 8,
-        cs - 8
-      );
+      const [x, y] = posKey.split(',').map(Number) as [number, number];
+      const duct = getDuctAt(this.grid, x, y);
+      if (!duct) continue;
+      const cx = this.gridOffsetX + (x + 0.5) * cs;
+      const cy = this.gridOffsetY + (y + 0.5) * cs;
+      for (const dir of getDuctConnections(duct.type, duct.rotation)) {
+        const dx = dir === 'right' ? 1 : dir === 'left' ? -1 : 0;
+        const dy = dir === 'down' ? 1 : dir === 'up' ? -1 : 0;
+        g.lineStyle(cs * 0.13, 0x45dfd2, 0.13);
+        g.lineBetween(cx, cy, cx + dx * cs / 2, cy + dy * cs / 2);
+        g.lineStyle(Math.max(1, cs * 0.035), 0x8bfff1, pulse);
+        g.lineBetween(cx, cy, cx + dx * cs / 2, cy + dy * cs / 2);
+      }
+      g.fillStyle(0xb4fff3, pulse);
+      g.fillCircle(cx, cy, Math.max(1.5, cs * 0.035));
     }
   }
 
+  private toggleControls(): void {
+    if (this.meltdownTriggered || (!this.controlsOpen && this.isPaused)) return;
+    this.controlsOpen = !this.controlsOpen;
+    this.isPaused = this.controlsOpen;
+    this.controlsOverlay.setVisible(this.controlsOpen);
+  }
+
   private togglePause(): void {
+    if (this.controlsOpen) { this.toggleControls(); return; }
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
       this.pauseOverlay.show();
@@ -507,6 +595,16 @@ export class GameScene extends Phaser.Scene {
     this.cursorGraphics.clear();
     if (!this.cursorVisible) return;
     const cs = this.currentCellSize;
+    if (this.selectedType && canPlaceDuct(this.grid, this.cursorX, this.cursorY)) {
+      const cx = this.gridOffsetX + (this.cursorX + 0.5) * cs;
+      const cy = this.gridOffsetY + (this.cursorY + 0.5) * cs;
+      this.cursorGraphics.lineStyle(cs * 0.15, 0x77f5df, 0.4);
+      for (const dir of getDuctConnections(this.selectedType, this.placementRotation)) {
+        const dx = dir === 'right' ? 1 : dir === 'left' ? -1 : 0;
+        const dy = dir === 'down' ? 1 : dir === 'up' ? -1 : 0;
+        this.cursorGraphics.lineBetween(cx, cy, cx + dx * cs / 2, cy + dy * cs / 2);
+      }
+    }
     this.cursorGraphics.lineStyle(2, 0xffffff, 0.9);
     this.cursorGraphics.strokeRect(
       this.gridOffsetX + this.cursorX * cs + 2,
@@ -518,13 +616,7 @@ export class GameScene extends Phaser.Scene {
 
   private handleKeyboardPlace(): void {
     if (this.isPaused || !this.cursorVisible) return;
-    const existingDuct = getDuctAt(this.grid, this.cursorX, this.cursorY);
-    if (existingDuct) {
-      // If duct exists at cursor, rotate it
-      rotateDuct(this.grid, this.cursorX, this.cursorY);
-      const sprite = this.ductSprites.get(`${this.cursorX},${this.cursorY}`);
-      sprite?.rotateClockwise();
-    } else if (this.selectedType && canPlaceDuct(this.grid, this.cursorX, this.cursorY)) {
+    if (this.selectedType && canPlaceDuct(this.grid, this.cursorX, this.cursorY)) {
       this.placeDuctAt(this.cursorX, this.cursorY, this.selectedType);
     }
   }
@@ -536,6 +628,9 @@ export class GameScene extends Phaser.Scene {
       rotateDuct(this.grid, this.cursorX, this.cursorY);
       const sprite = this.ductSprites.get(`${this.cursorX},${this.cursorY}`);
       sprite?.rotateClockwise();
+    } else {
+      this.placementRotation = ((this.placementRotation + 90) % 360) as Rotation;
+      this.drawCursor();
     }
   }
 

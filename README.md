@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5174` in your browser.
+Open the URL Vite prints (normally `http://localhost:5173`) in a WebGL-capable desktop browser.
 
 ### Build for Production
 
@@ -23,6 +23,7 @@ Output goes to `dist/`.
 
 ```bash
 npm test
+npm run test:browser
 ```
 
 ## How to Play
@@ -33,10 +34,29 @@ npm test
 
 | Action | Mouse/Touch | Keyboard |
 |--------|-------------|----------|
-| Place tile | Click empty cell | Arrow keys + Space |
-| Rotate tile | Click placed tile | R |
+| Select pipe | Click inventory | 1 Straight, 2 Corner, 3 T-junction, 4 Cross |
+| Move placement cursor | Hover over grid | Arrow keys |
+| Place tile | Click empty cell | Space / Enter |
+| Rotate tile / preview | Click placed tile | R |
 | Remove tile | Right-click / long-press | Delete / Backspace |
 | Pause | Click ⏸ button | Esc / P |
+| Controls help (pauses timer) | Click Help | H |
+
+Every level starts with the controls shown and its timer paused. Press Enter or click Play when ready. The highlighted cell starts beside the cooler, with a pipe selected. Use R on an empty cell to rotate the placement preview; on an occupied cell it rotates that pipe. Repeated number presses keep that pipe type selected. Space/Enter only places pipes; use R to rotate them.
+
+### Level 3: Branching Out
+
+Route air across the middle row to the far-right column, then split up and down to both servers. This seven-pipe solution uses five straights and both T-junctions (unused T outlets are allowed):
+
+```text
+. . . . . S
+. . . . . │
+C ─ ─ ─ ┬ ┤
+. . . . . │
+. . . . . S
+```
+
+`C` is the cooler, `S` a server. The first T connects left/right/down; the second connects left/up/down. On Normal, uncooled racks now allow 21 seconds before meltdown, and seven pipes qualify for the three-star tile target.
 
 ### Gameplay
 
@@ -119,3 +139,32 @@ src/
 ## License
 
 MIT
+
+## Datacenter tycoon
+
+The default page opens the Three.js datacenter tycoon. The Phaser puzzle campaign remains isolated at **Classic campaign** or `?mode=classic`; its progress keys are unchanged.
+
+1. Accept the launch contract and buy racks and at least one floor cooler while paused.
+2. Point rack fronts toward cool supply air and keep their exhausts separated. Blue marks intake/supply; orange marks exhaust/return.
+3. Start operation, then inspect numeric temperature, airflow, service, power, reliability, and ledger diagnostics. Pause to revise the room.
+4. Save and load locally, or run an isolated projected design trial. Trials do not alter the live contract, cash, room, or save.
+
+For the measured affordable starting layout, use zero-based floor coordinates: place two east-facing coolers at `(1,2)` and `(11,2)`, then four north-facing Dense racks at `(2,3)`, `(4,3)`, `(7,3)`, and `(9,3)`. Set rack workload and cooler command to 100%, then start operation. This costs $122,000 of the $150,000 opening budget. The in-game separated and recirculation design-trial buttons provide an isolated comparison before you commit to live operation.
+
+Focus the room for keyboard controls: arrows move the cursor, Space places/selects, R rotates, M starts an explicit move, Delete/Backspace sells, Ctrl/Cmd+Z undoes, I focuses inspection, O cycles overlays, P pauses/resumes, 1/2/3 choose 1×/2×/4× speed, H opens help, and Escape cancels a preview or closes help. Right-click sells owned equipment while planning. All actions are also available through DOM controls.
+
+Saving always pauses operation. Loading restores the complete saved simulation in planning mode and does not add offline time. Resize changes presentation only; it does not rebuild or advance the room.
+
+The simulation is a deterministic, height-averaged game approximation, not validated CFD or facility-design or safety advice. A WebGL-capable browser is required for the 3D room; the classic campaign link remains available if initialization fails.
+
+
+### Room view and mobile controls
+
+Rotate the room with Q/E, the view-arrow buttons, or a middle-button drag. Use the mouse wheel or +/− buttons to zoom; Camera switches between Room and Plan views. Click/tap a rack’s temperature label to select that exact rack, then use Move, Rotate, or Sell in Inspection. While placing, on-screen Rotate rack and Cancel controls are available without a keyboard. Right-click a rack or its label to sell it.
+
+The tycoon supports portrait and landscape layouts: all six statistics remain visible, and on small screens the equipment panel scrolls below the room. Touch controls have 44px minimum targets. The classic campaign retains its own portrait warning. For phone testing on the same local network, start Vite with `npm run dev -- --host 0.0.0.0` and open the Network URL it prints.
+
+
+### Reading airflow
+
+Blue roof arrows point into rack intakes and out of cooler supplies; red roof arrows point out of rack exhausts and into cooler returns. They rotate with equipment and remain visible while paused. The Airflow overlay uses filled, dark-outlined arrows colored by actual local air temperature. Use Hide labels to inspect crowded rooms without temperature tags covering arrows; Show labels restores direct rack-label selection.

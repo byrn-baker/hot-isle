@@ -19,13 +19,14 @@ export class TemperatureBar extends Phaser.GameObjects.Container {
     x: number,
     y: number,
     meltdownThreshold: number,
-    safeThreshold: number
+    safeThreshold: number,
+    cellSize: number = CELL_SIZE
   ) {
     super(scene, x, y);
 
     this.meltdownThreshold = meltdownThreshold;
     this.safeThreshold = safeThreshold;
-    this.barWidth = CELL_SIZE - 8;
+    this.barWidth = cellSize - 8;
     this.barHeight = 6;
 
     // Graphics for the bar
@@ -37,6 +38,8 @@ export class TemperatureBar extends Phaser.GameObjects.Container {
       fontSize: '11px',
       fontFamily: 'monospace',
       color: '#ffffff',
+      backgroundColor: '#081320',
+      padding: { x: 3, y: 1 },
       align: 'center',
     });
     this.tempText.setOrigin(0.5, 0.5);
