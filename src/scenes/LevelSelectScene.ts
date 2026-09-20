@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { drawBackdrop } from '@/ui/Backdrop';
 import { loadProgress, isLevelUnlocked, loadCustomLevels } from '@/utils/persistence';
 
 /** All campaign level IDs in order */
@@ -17,6 +18,7 @@ export class LevelSelectScene extends Phaser.Scene {
   }
 
   create(): void {
+    drawBackdrop(this);
     this.scale.on('resize', () => {
       this.scale.off('resize');
       this.scene.restart();

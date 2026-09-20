@@ -44,18 +44,6 @@ export class ColdSourceSprite extends Phaser.GameObjects.Container {
     sprite.setDisplaySize(cellSize, cellSize);
     this.add(sprite);
 
-    // Large directional arrow inside the cell
-    const arrow = new Phaser.GameObjects.Graphics(scene);
-    const arrowSize = cellSize * 0.35;
-    arrow.fillStyle(0xffffff, 0.9);
-    arrow.fillTriangle(
-      -arrowSize * 0.5, -arrowSize * 0.6,
-      -arrowSize * 0.5, arrowSize * 0.6,
-      arrowSize * 0.7, 0
-    );
-    arrow.setAngle(DIR_ANGLE[direction]);
-    this.add(arrow);
-
     // Animated pulsing chevrons extending out from the cell in emission direction
     const offset = DIR_OFFSET[direction];
     for (let i = 1; i <= 2; i++) {
@@ -87,26 +75,12 @@ export class ColdSourceSprite extends Phaser.GameObjects.Container {
       });
     }
 
-    // "COLD" label
-    const labelOffset = cellSize * 0.55;
-    if (direction === 'right' || direction === 'left') {
-      const label = new Phaser.GameObjects.Text(scene, 0, labelOffset * 0.8, 'COLD', {
-        fontSize: `${Math.max(Math.round(cellSize * 0.18), 8)}px`,
-        fontFamily: 'monospace',
-        color: '#4fc3f7',
-      });
-      label.setOrigin(0.5);
-      this.add(label);
-    } else {
-      const label = new Phaser.GameObjects.Text(scene, labelOffset * 0.8, 0, 'COLD', {
-        fontSize: `${Math.max(Math.round(cellSize * 0.18), 8)}px`,
-        fontFamily: 'monospace',
-        color: '#4fc3f7',
-      });
-      label.setOrigin(0.5);
-      this.add(label);
-    }
-
+    const outlet = new Phaser.GameObjects.Graphics(scene);
+    outlet.fillStyle(0xb3fff0, 1);
+    outlet.fillTriangle(cellSize * 0.30, -cellSize * 0.07,
+      cellSize * 0.30, cellSize * 0.07, cellSize * 0.43, 0);
+    outlet.setAngle(DIR_ANGLE[direction]);
+    this.add(outlet);
     scene.add.existing(this);
   }
 }

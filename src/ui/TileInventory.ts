@@ -26,8 +26,9 @@ export class TileInventory extends Phaser.GameObjects.Container {
 
     // Selection indicator (rendered behind slots)
     this.selectionIndicator = new Phaser.GameObjects.Rectangle(
-      scene, 0, 0, CELL_SIZE + 8, CELL_SIZE + 24, 0x4fc3f7, 0.3
+      scene, 0, 0, CELL_SIZE + 12, CELL_SIZE + 28, 0x58ead5, 0.2
     );
+    this.selectionIndicator.setStrokeStyle(2, 0x77f5df);
     this.selectionIndicator.setVisible(false);
     this.add(this.selectionIndicator);
 
@@ -40,9 +41,9 @@ export class TileInventory extends Phaser.GameObjects.Container {
 
       // Background
       const bg = new Phaser.GameObjects.Rectangle(
-        scene, slotX, 0, CELL_SIZE + 4, CELL_SIZE + 20, 0x263238
+        scene, slotX, 0, CELL_SIZE + 4, CELL_SIZE + 20, 0x122335
       );
-      bg.setStrokeStyle(1, 0x455a64);
+      bg.setStrokeStyle(1, 0x375267);
       bg.setInteractive({ useHandCursor: true });
       bg.on('pointerdown', () => this.selectSlot(type));
       this.add(bg);
@@ -65,17 +66,23 @@ export class TileInventory extends Phaser.GameObjects.Container {
       countText.setOrigin(0.5, 0.5);
       this.add(countText);
 
+      const shortcut = new Phaser.GameObjects.Text(scene, slotX - 25, -33, `${i + 1}`, {
+        fontSize: '10px', fontFamily: 'monospace', color: '#8ba8bc',
+      });
+      this.add(shortcut);
+      if (count === 0) { icon.setAlpha(0.25); countText.setColor('#587084'); }
       this.slots.set(type, { bg, icon, countText, remaining: count, total: count });
     });
 
     scene.add.existing(this);
   }
 
-  private selectSlot(type: DuctType): void {
+  private selectSlot(type: DuctType, toggle = true): void {
     const slot = this.slots.get(type);
     if (!slot || slot.remaining <= 0) return;
+    if (!toggle && this.selectedType === type) return;
 
-    if (this.selectedType === type) {
+    if (toggle && this.selectedType === type) {
       // Deselect
       this.selectedType = null;
       this.selectionIndicator.setVisible(false);
@@ -146,7 +153,7 @@ export class TileInventory extends Phaser.GameObjects.Container {
     const types: DuctType[] = ['straight', 'corner', 't_junction', 'cross'];
     const type = types[index];
     if (type) {
-      this.selectSlot(type);
+      this.selectSlot(type, false);
     }
   }
 }

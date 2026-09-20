@@ -9,7 +9,7 @@
       "y": 0,
       "meltdownThreshold": 100,
       "safeThreshold": 40,
-      "heatRate": 4,
+      "heatRate": 2,
       "coolingRate": 7
     },
     {
@@ -17,7 +17,7 @@
       "y": 4,
       "meltdownThreshold": 100,
       "safeThreshold": 40,
-      "heatRate": 4,
+      "heatRate": 2,
       "coolingRate": 7
     }
   ],
@@ -37,8 +37,8 @@
     "cross": 0
   },
   "scoring": {
-    "threeStarTiles": 5,
-    "twoStarTiles": 7,
+    "threeStarTiles": 7,
+    "twoStarTiles": 9,
     "threeStarTime": 45,
     "twoStarTime": 90
   }

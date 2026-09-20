@@ -1,0 +1,43 @@
+{
+  "project": "Hot Isle \u2014 Spec Kit technical planning",
+  "qualityGates": [
+    "All requirements mapped to design and proposed verification",
+    "No game-source modifications or false passing test claims"
+  ],
+  "stories": [
+    {
+      "id": "PLAN-001",
+      "title": "Produce concrete Spec Kit technical design",
+      "description": "Fill the plan template and create research.md, data-model.md, quickstart.md and contracts/simulation.md. Cover solver, economics, UI integration and save schema. Inspect current code before choosing integration seams. Keep implementation tasks pending plan review.",
+      "status": "done",
+      "dependsOn": [],
+      "acceptanceCriteria": [
+        "Plan template replaced with actionable technical design and constitution check",
+        "Supporting documents define simulation stepping, heat and airflow units, numerical stability, economies, data and save contracts",
+        "Every FR-001 through FR-021 and SC-001 through SC-008 traced to implementation areas and proposed verification",
+        "Scope and technical uncertainties clearly recorded without fabricated results"
+      ],
+      "startedAt": "2026-09-13T18:41:19.247728+00:00",
+      "completedAt": "2026-09-13T18:51:53.845659+00:00",
+      "updatedAt": "2026-09-13T18:51:53.845645+00:00"
+    },
+    {
+      "id": "PLAN-002",
+      "title": "Review design against spec and existing code",
+      "description": "Review the technical documents from PLAN-001 in a fresh context. Correct contradictions or missing decisions in those design documents. Create analysis.md with evidence, complete requirement coverage and remaining risks. Do not edit spec, implement code, generate implementation tasks or approve the plan.",
+      "status": "done",
+      "dependsOn": [
+        "PLAN-001"
+      ],
+      "acceptanceCriteria": [
+        "analysis.md records review findings and their resolution or explicit pending status",
+        "Traceability covers all specification requirements and success criteria",
+        "Solver and financial step contracts are coherent enough to implement and test",
+        "User plan review remains pending and existing application code unchanged"
+      ],
+      "startedAt": "2026-09-13T18:51:55.943037+00:00",
+      "completedAt": "2026-09-13T19:07:49.393998+00:00",
+      "updatedAt": "2026-09-13T19:07:49.393983+00:00"
+    }
+  ]
+}

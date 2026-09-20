@@ -1,27 +1,11 @@
-import Phaser from 'phaser';
-import { BootScene } from '@/scenes/BootScene';
-import { MenuScene } from '@/scenes/MenuScene';
-import { LevelSelectScene } from '@/scenes/LevelSelectScene';
-import { GameScene } from '@/scenes/GameScene';
-import { LevelCompleteScene } from '@/scenes/LevelCompleteScene';
-import { CustomLevelScene } from '@/scenes/CustomLevelScene';
-
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  parent: 'game-container',
-  backgroundColor: '#1a1a2e',
-  scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: '100%',
-    height: '100%',
-  },
-  input: {
-    keyboard: true,
-    mouse: true,
-    touch: true,
-  },
-  scene: [BootScene, MenuScene, LevelSelectScene, GameScene, LevelCompleteScene, CustomLevelScene],
-};
-
-new Phaser.Game(config);
+const classic = new URLSearchParams(location.search).get('mode') === 'classic';
+if (classic) {
+  void import('./campaign');
+} else {
+  document.getElementById('rotate-prompt')?.remove();
+  void import('./tycoon/bootstrap').then(({ startTycoon }) => startTycoon()).catch((error: unknown) => {
+    console.error(error);
+    document.getElementById('game-container')!.innerHTML = '<div style="padding:48px;color:white;font:18px sans-serif">The tycoon room could not start. <a style="color:#76eed3" href="?mode=classic">Open the classic campaign</a></div>';
+  });
+}
+export {};

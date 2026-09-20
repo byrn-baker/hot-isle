@@ -1,0 +1,175 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ink: #eaf4f6;
+  --muted: #8da8b1;
+  --panel: #0d1824;
+  --panel-2: #122131;
+  --line: #294151;
+  --cyan: #6ce9df;
+  --blue: #289dff;
+  --hot-air: #ff384b;
+  --orange: #ff956b;
+  --gold: #f5c76b;
+}
+
+.tycoon-app, .tycoon-app * { box-sizing: border-box; }
+.tycoon-app {
+  width: 100%; height: 100%; min-width: 320px; overflow: hidden;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+  color: var(--ink); background: radial-gradient(circle at 30% 20%, #203b50 0, #101d2b 38%, #08121d 100%);
+  letter-spacing: .01em;
+}
+
+.tycoon-app button, .tycoon-app a {
+  font: inherit; color: var(--ink); border: 1px solid #355465; background: #132637;
+  border-radius: 7px; padding: 8px 11px; cursor: pointer; text-decoration: none;
+  transition: border-color .15s, background .15s, transform .15s;
+}
+.tycoon-app button:hover:not(:disabled), .tycoon-app a:hover { border-color: var(--cyan); background: #183247; }
+.tycoon-app button:active:not(:disabled) { transform: translateY(1px); }
+.tycoon-app :focus-visible { outline: 3px solid #ffde86; outline-offset: 3px; }
+.tycoon-app button:disabled { opacity: .38; cursor: not-allowed; }
+.tycoon-app button.is-primary { color: #06171b; background: var(--cyan); border-color: var(--cyan); font-weight: 800; }
+.tycoon-app button.is-primary:hover:not(:disabled) { color: #06171b; background: #8ff5ed; border-color: #8ff5ed; }
+.tycoon-app button.is-active { color: var(--cyan); border-color: var(--cyan); box-shadow: inset 0 0 0 1px #6ce9df55; }
+.tycoon-app small { color: var(--muted); text-transform: uppercase; font-size: 10px; letter-spacing: .12em; }
+.tycoon-app kbd { padding: 1px 4px; border: 1px solid #466174; border-bottom-width: 2px; border-radius: 4px; color: #cfe6ed; background: #091521; font-size: 10px; }
+
+.tycoon-topbar {
+  min-height: 70px; display: flex; align-items: center; gap: 24px; padding: 10px 18px;
+  background: #09131dcc; border-bottom: 1px solid var(--line); backdrop-filter: blur(12px); z-index: 5;
+}
+.tycoon-brand { display: grid; grid-template-columns: 38px auto; grid-template-rows: 22px 16px; border: 0 !important; background: transparent !important; padding: 0 !important; min-width: 170px; }
+.tycoon-brand > span { grid-row: 1 / 3; display: grid; place-items: center; width: 34px; height: 34px; border: 2px solid var(--cyan); color: var(--cyan); font: 900 13px ui-monospace, monospace; transform: rotate(-4deg); }
+.tycoon-brand strong { font-size: 17px; letter-spacing: .16em; }
+.tycoon-brand small { font-size: 8px; }
+.tycoon-kpis { display: grid; grid-template-columns: repeat(6, minmax(90px, 1fr)); flex: 1; max-width: 960px; }
+.tycoon-kpis > div { padding: 2px 13px; border-left: 1px solid var(--line); }
+.tycoon-kpis b { display: block; margin-top: 4px; font: 700 13px ui-monospace, SFMono-Regular, monospace; color: #f4fbfc; white-space: nowrap; }
+.tycoon-top-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.tycoon-top-actions a, .tycoon-top-actions button { font-size: 12px; padding: 7px 9px; }
+.tycoon-mode { padding: 5px 8px; border: 1px solid var(--gold); color: var(--gold); font: 800 10px ui-monospace, monospace; letter-spacing: .12em; border-radius: 4px; }
+.tycoon-mode[data-mode="operating"] { color: var(--cyan); border-color: var(--cyan); }
+.tycoon-mode[data-mode="failed"] { color: var(--orange); border-color: var(--orange); }
+
+.tycoon-workspace { min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(330px, 385px); }
+.tycoon-stage-wrap { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: radial-gradient(ellipse at center, #28475b55, transparent 65%); }
+.tycoon-stage { position: absolute; inset: 0; }
+.tycoon-canvas { display: block; width: 100%; height: 100%; touch-action: pan-y pinch-zoom; }
+.tycoon-stage-toolbar, .tycoon-legend, .tycoon-room-readout {
+  position: absolute; z-index: 2; display: flex; gap: 8px; border: 1px solid #39556699;
+  background: #091521dc; box-shadow: 0 8px 30px #0005; backdrop-filter: blur(9px); border-radius: 9px;
+}
+.tycoon-stage-toolbar { left: 12px; top: 12px; right: 12px; width: fit-content; max-width: calc(100% - 24px); flex-wrap: wrap; padding: 6px; }
+.tycoon-stage-toolbar button { font-size: 11px; padding: 6px 8px; }
+.tycoon-legend { left: 16px; bottom: 58px; padding: 8px 10px; font-size: 11px; }
+.tycoon-legend span { display: flex; align-items: center; gap: 6px; }
+.tycoon-legend i { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 8px currentColor; }
+.tycoon-legend i.is-hot { background: var(--hot-air); }
+.tycoon-room-readout { right: 16px; bottom: 58px; flex-direction: column; gap: 3px; padding: 8px 10px; text-align: right; font: 600 11px ui-monospace, monospace; }
+.tycoon-contract-result { position: absolute; z-index: 4; inset: 50% auto auto 50%; transform: translate(-50%, -50%); width: min(520px, calc(100% - 32px)); padding: 24px; border: 1px solid var(--cyan); border-radius: 12px; background: #091521f2; box-shadow: 0 20px 80px #000a; }
+.tycoon-contract-result strong { font-size: 22px; }
+.tycoon-contract-result p { margin-top: 10px; color: #b8ced4; line-height: 1.55; }
+.tycoon-contract-result dl { display: grid; grid-template-columns: 1fr auto; gap: 4px 18px; margin-top: 12px; font-size: 11px; }
+.tycoon-contract-result dd { color: var(--ink); font: 700 11px ui-monospace, monospace; text-align: right; }
+
+.tycoon-panel { min-height: 0; overflow: auto; border-left: 1px solid var(--line); background: #0b1621f2; scrollbar-color: #365267 #0b1621; }
+.tycoon-panel > section, .tycoon-panel > details { padding: 15px 17px; border-bottom: 1px solid var(--line); }
+.tycoon-panel h1, .tycoon-panel h2 { font-size: 15px; line-height: 1.2; margin: 1px 0 0; }
+.tycoon-section-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.tycoon-section-heading > span, .tycoon-panel summary > span { color: var(--cyan); font: 700 10px ui-monospace, monospace; }
+.tycoon-contract > p, .tycoon-note { color: #9cb2ba; font-size: 11px; line-height: 1.5; }
+.tycoon-primary-actions { display: flex; gap: 8px; margin-top: 12px; }
+.tycoon-primary-actions > .is-primary { flex: 1; }
+.tycoon-speed { display: flex; gap: 4px; }
+.tycoon-speed button { padding-inline: 8px; }
+
+.tycoon-catalog { display: grid; gap: 6px; }
+.tycoon-catalog-card { width: 100%; display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: center; text-align: left; padding: 8px !important; }
+.tycoon-catalog-card > span:last-child { min-width: 0; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; }
+.tycoon-catalog-card strong { font-size: 12px; }
+.tycoon-catalog-card small { grid-column: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: none; letter-spacing: .01em; }
+.tycoon-catalog-card b { grid-column: 2; grid-row: 1 / 3; align-self: center; color: var(--gold); font: 700 11px ui-monospace, monospace; }
+.tycoon-card-icon { display: grid; place-items: center; width: 26px; height: 32px; color: var(--cyan); background: #091521; border: 1px solid #3a5b68; border-radius: 4px; }
+
+.tycoon-inspection { outline: 0; }
+.tycoon-inspection [data-role="inspection-body"] { min-height: 54px; color: #a9bec5; font-size: 11px; line-height: 1.45; }
+.tycoon-inspection-title { display: flex; justify-content: space-between; gap: 8px; color: var(--ink); }
+.tycoon-inspection-title span { color: var(--muted); font: 10px ui-monospace, monospace; }
+.tycoon-inspection dl, .tycoon-trial-result dl { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; margin-top: 8px; }
+.tycoon-inspection dd, .tycoon-trial-result dd { color: #e8f4f5; font: 600 10px ui-monospace, monospace; text-align: right; }
+.tycoon-reasons { margin-top: 7px; color: var(--gold); }
+.tycoon-range { display: block; margin-top: 8px; }
+.tycoon-range > span { display: flex; justify-content: space-between; }
+.tycoon-range input { width: 100%; accent-color: var(--cyan); }
+.tycoon-button-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tycoon-button-row button { flex: 1 1 auto; font-size: 10px; padding: 6px 8px; }
+
+.tycoon-panel details > summary { list-style: none; cursor: pointer; font-weight: 800; font-size: 13px; }
+.tycoon-panel details > summary::-webkit-details-marker { display: none; }
+.tycoon-panel details > summary::after { content: '+'; float: right; color: var(--muted); }
+.tycoon-panel details[open] > summary::after { content: '−'; }
+.tycoon-trial-result { margin-top: 9px; padding: 9px; color: #a9bec5; background: #091521; border-radius: 6px; font-size: 10px; line-height: 1.45; }
+.tycoon-ledger-summary { display: grid; gap: 3px; margin-top: 10px; }
+.tycoon-ledger-summary > div { display: flex; justify-content: space-between; font-size: 10px; color: #a8bcc4; }
+.tycoon-ledger-summary b { font: 600 10px ui-monospace, monospace; color: var(--ink); }
+.tycoon-ledger-recent { max-height: 105px; overflow: auto; margin: 8px 0 0; padding-left: 17px; color: #78939e; font: 9px/1.55 ui-monospace, monospace; }
+.tycoon-storage { padding-bottom: 28px !important; }
+
+.tycoon-status { min-height: 34px; display: flex; align-items: center; padding: 6px 18px; border-top: 1px solid var(--line); color: #a8c2c9; background: #08131d; font: 11px ui-monospace, monospace; }
+.tycoon-status[data-error="true"] { color: #ffb190; }
+.tycoon-world-labels { z-index: 1; }
+.tycoon-rack-label { box-shadow: 0 3px 12px #0008; }
+
+.tycoon-help-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 20px; background: #03090dd9; backdrop-filter: blur(12px); }
+.tycoon-help-backdrop[hidden] { display: none; }
+.tycoon-help { width: min(670px, 100%); max-height: calc(100dvh - 40px); overflow: auto; padding: 26px; border: 1px solid #4a7382; border-radius: 14px; background: linear-gradient(145deg, #132738, #0a1621); box-shadow: 0 30px 100px #000b; }
+.tycoon-help h2 { margin: 3px 0 12px; font-size: 24px; }
+.tycoon-help > p { color: #aec3ca; font-size: 13px; line-height: 1.6; }
+.tycoon-key-list { display: grid; grid-template-columns: minmax(130px, auto) 1fr; gap: 1px; margin: 18px 0; border: 1px solid var(--line); background: var(--line); }
+.tycoon-key-list dt, .tycoon-key-list dd { padding: 7px 9px; background: #0c1a26; font-size: 11px; }
+.tycoon-key-list dt { color: var(--cyan); font: 700 10px ui-monospace, monospace; }
+.tycoon-disclaimer { margin-bottom: 16px; padding-left: 10px; border-left: 2px solid var(--orange); }
+
+@media (max-width: 1250px) {
+  .tycoon-topbar { gap: 10px; flex-wrap: wrap; }
+  .tycoon-kpis { order: 3; flex: 1 0 100%; max-width: none; grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .tycoon-kpis > div { min-width: 0; padding: 2px 8px; }
+  .tycoon-kpis small { font-size: 9px; letter-spacing: .04em; }
+  .tycoon-kpis b { font-size: 12px; white-space: normal; overflow-wrap: anywhere; }
+  .tycoon-workspace { grid-template-columns: minmax(0, 1fr) 330px; }
+}
+
+@media (max-width: 760px) {
+  .tycoon-app { overflow: auto; grid-template-rows: auto auto auto; }
+  .tycoon-topbar { position: sticky; top: 0; padding: 8px 10px; }
+  .tycoon-app { scroll-padding-top: 175px; scroll-padding-bottom: 50px; }
+  .tycoon-brand { min-width: 38px; width: 38px; }
+  .tycoon-brand strong, .tycoon-brand small { display: none; }
+  .tycoon-top-actions { gap: 5px; }
+  .tycoon-top-actions a, .tycoon-top-actions button { font-size: 11px; padding: 7px; }
+  .tycoon-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8px; }
+  .tycoon-workspace { display: block; }
+  .tycoon-stage-wrap { height: 58svh; min-height: 390px; }
+  .tycoon-panel { overflow: visible; border-left: 0; border-top: 1px solid var(--line); }
+  .tycoon-room-readout { left: 12px; right: auto; bottom: 12px; text-align: left; max-width: calc(100% - 24px); font-size: 10px; }
+  .tycoon-legend { left: 12px; bottom: 70px; font-size: 10px; }
+  .tycoon-status { position: sticky; bottom: 0; z-index: 6; overflow-wrap: anywhere; }
+  .tycoon-app button:not(.tycoon-rack-label), .tycoon-top-actions a, .tycoon-panel summary { min-height: 44px; }
+  .tycoon-range input { min-height: 44px; }
+  .tycoon-rack-label { min-height: 44px; }
+  .tycoon-stage-toolbar { gap: 4px; }
+  .tycoon-help { padding: 16px; }
+  .tycoon-key-list { grid-template-columns: minmax(100px, .7fr) 1fr; }
+  .tycoon-contract-result { max-height: 90%; overflow: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tycoon-app *, .tycoon-app *::before, .tycoon-app *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}
+
+@media (pointer: coarse) {
+  .tycoon-app button, .tycoon-top-actions a, .tycoon-panel summary { min-height: 44px; }
+  .tycoon-range input { min-height: 44px; }
+}

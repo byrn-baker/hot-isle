@@ -1,0 +1,29 @@
+{
+  "rackCount": 24,
+  "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/151.0.0.0 Safari/537.36",
+  "viewport": {
+    "width": 1440,
+    "height": 1000,
+    "devicePixelRatio": 1
+  },
+  "frameMs": {
+    "median": 183.3000000000011,
+    "p95": 216.60000000000036,
+    "max": 233.30000000000018,
+    "fpsFromMedian": 5.455537370430955
+  },
+  "inputToFrameMs": {
+    "median": 32.900000002235174,
+    "p95": 46.899999998509884,
+    "max": 46.899999998509884
+  },
+  "physicsTickMs": {
+    "median": 2.099999997764826,
+    "p95": 2.400000002235174,
+    "max": 2.800000000745058
+  },
+  "environment": "Omarchy 4.0.2 / Linux 7.1.9, Intel i5-10300H, 16 GB RAM, headless Chromium 151 with software SwiftShader, Vite development server",
+  "method": "Five-second rAF interval sample after first callback; 20 capture-phase overlay keydowns to following rAF callback (not display presentation latency); 100 post-warmup fixed ticks; custom 250k budget for 24 Economy racks in rows 1,3,5,7.",
+  "target60fpsMet": false,
+  "targetDeviceProductionMeasurement": "pending"
+}
